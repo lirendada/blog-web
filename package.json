@@ -25,9 +25,12 @@
     "next-auth": "beta",
     "react": "^19",
     "react-dom": "^19",
+    "rehype-pretty-code": "^0.14.3",
+    "rehype-stringify": "^10.0.1",
     "remark": "^15",
     "remark-gfm": "^4",
-    "remark-html": "^16",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
     "rss-parser": "^3.13.0"
   },
   "devDependencies": {

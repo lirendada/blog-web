@@ -1,11 +1,24 @@
-import { remark } from 'remark'
+import { unified } from 'unified'
+import remarkParse from 'remark-parse'
 import remarkGfm from 'remark-gfm'
-import remarkHtml from 'remark-html'
+import remarkRehype from 'remark-rehype'
+import rehypePrettyCode from 'rehype-pretty-code'
+import rehypeStringify from 'rehype-stringify'
 
 export async function markdownToHtml(markdown: string): Promise<string> {
-  const result = await remark()
+  const file = await unified()
+    .use(remarkParse)
     .use(remarkGfm)
-    .use(remarkHtml, { sanitize: false })
+    .use(remarkRehype)
+    .use(rehypePrettyCode, {
+      theme: {
+        light: 'vitesse-light',
+        dark: 'vitesse-dark',
+      },
+      keepBackground: false,
+      defaultLang: 'plaintext',
+    })
+    .use(rehypeStringify)
     .process(markdown)
-  return result.toString()
+  return file.toString()
 }

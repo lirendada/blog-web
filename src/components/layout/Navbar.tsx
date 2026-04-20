@@ -8,6 +8,8 @@ import SearchDialog from '@/components/ui/SearchDialog'
 
 const navLinks = [
   { href: '/articles', label: '博客' },
+  { href: '/archives', label: '归档' },
+  { href: '/tags', label: '标签' },
   { href: '/news', label: '资讯' },
   { href: '/about', label: '关于' },
 ]
@@ -65,10 +67,7 @@ export default function Navbar() {
           </button>
 
           {navLinks.map((link) => {
-            const isActive =
-              link.href === '/articles'
-                ? pathname.startsWith('/articles')
-                : pathname === link.href
+            const isActive = pathname === link.href || (link.href === '/articles' && pathname.startsWith('/articles') && !pathname.startsWith('/articles/tag'))
 
             return (
               <Link

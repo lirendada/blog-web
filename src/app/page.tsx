@@ -7,6 +7,34 @@ import ArticleCard from '@/components/blog/ArticleCard'
 export const metadata: Metadata = {
   title: 'my_blog - 个人博客',
   description: '用爱发电的个人博客，记录技术与生活。',
+  alternates: { canonical: '/' },
+}
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+
+function JsonLd() {
+  const schema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        name: 'my_blog',
+        url: siteUrl,
+        description: '用爱发电的个人博客，记录技术与生活。',
+      },
+      {
+        '@type': 'Organization',
+        name: 'my_blog',
+        url: siteUrl,
+      },
+    ],
+  }
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  )
 }
 
 export const dynamic = 'force-dynamic'
@@ -52,6 +80,8 @@ export default async function HomePage() {
   const latestArticle = articles[0]
 
   return (
+    <>
+    <JsonLd />
     <div className="max-w-[960px] w-full mx-auto px-6">
         {/* Hero - 个人名片 */}
         <section className="py-10">
@@ -202,5 +232,6 @@ export default async function HomePage() {
           </section>
         </div>
     </div>
+    </>
   )
 }

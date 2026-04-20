@@ -47,6 +47,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   return {
     title: article.title,
     description: article.excerpt ?? undefined,
+    alternates: { canonical: `/articles/${article.slug}` },
     openGraph: {
       title: article.title,
       description: article.excerpt ?? undefined,
@@ -54,6 +55,12 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
       publishedTime: article.publishedAt?.toISOString(),
       tags: article.tags.map((t) => t.tag.name),
       ...(article.coverImage && { images: [{ url: article.coverImage }] }),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description: article.excerpt ?? undefined,
+      ...(article.coverImage && { images: [article.coverImage] }),
     },
   }
 }
@@ -71,6 +78,39 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const cookieStore = await cookies()
   const initialLiked = cookieStore.has(`liked_${article.slug}`)
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: article.title,
+    description: article.excerpt || undefined,
+    datePublished: article.publishedAt?.toISOString(),
+    author: { '@type': 'Person', name: 'my_blog' },
+    url: `${siteUrl}/articles/${article.slug}`,
+    ...(article.coverImage && { image: article.coverImage }),
+    keywords: article.tags.map((t) => t.tag.name).join(', '),
+  }
+
+  // Related articles (same tags or category, excluding current)
+  const tagIds = article.tags.map((t) => t.tagId)
+  const relatedArticles = await prisma.article.findMany({
+    where: {
+      status: 'published',
+      id: { not: article.id },
+      OR: [
+        ...(tagIds.length > 0 ? [{ tags: { some: { tagId: { in: tagIds } } } }] : []),
+        ...(article.categoryId ? [{ categoryId: article.categoryId }] : []),
+      ],
+    },
+    take: 3,
+    orderBy: { publishedAt: 'desc' },
+    include: {
+      category: { select: { name: true, slug: true } },
+      tags: { include: { tag: { select: { name: true, slug: true } } } },
+    },
+  })
+
   // Fire-and-forget viewCount increment
   prisma.article
     .update({
@@ -83,6 +123,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <ReadingProgress />
 
       <div className="max-w-[680px] mx-auto px-6 pt-8 pb-16">
@@ -138,7 +182,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         {article.tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-6">
             {article.tags.map((t) => (
-              <TagPill key={t.tag.slug} name={t.tag.name} />
+              <TagPill key={t.tag.slug} name={t.tag.name} slug={t.tag.slug} />
             ))}
           </div>
         )}
@@ -158,6 +202,40 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
         {/* Like button */}
         <LikeButton slug={article.slug} initialCount={article.likeCount} initialLiked={initialLiked} />
+
+        {/* Related articles */}
+        {relatedArticles.length > 0 && (
+          <div className="mt-12 pt-8 border-t border-dashed border-border-light dark:border-dark-border-light">
+            <h2 className="font-heading text-xl text-text dark:text-dark-text mb-4">
+              相关文章
+            </h2>
+            <div className="flex flex-col gap-4">
+              {relatedArticles.map((related) => (
+                <Link
+                  key={related.id}
+                  href={`/articles/${related.slug}`}
+                  className="group flex items-center gap-3 p-3 border border-dashed border-border-light dark:border-dark-border-light rounded-[var(--radius-md)] hover:border-accent/40 dark:hover:border-dark-accent/40 transition-colors"
+                >
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-heading text-sm text-text dark:text-dark-text group-hover:text-accent dark:group-hover:text-dark-accent transition-colors truncate">
+                      {related.title}
+                    </h3>
+                    {related.excerpt && (
+                      <p className="text-xs text-text-secondary dark:text-dark-text-secondary line-clamp-1 mt-0.5">
+                        {related.excerpt}
+                      </p>
+                    )}
+                  </div>
+                  {related.publishedAt && (
+                    <span className="font-mono text-xs text-text-secondary dark:text-dark-text-secondary shrink-0">
+                      {formatDate(related.publishedAt)}
+                    </span>
+                  )}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Comments */}
         <Comments slug={article.slug} />

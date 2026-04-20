@@ -77,7 +77,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
           {article.tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-2">
               {article.tags.map((t) => (
-                <TagPill key={t.tag.slug} name={t.tag.name} />
+                <TagPill key={t.tag.slug} name={t.tag.name} slug={t.tag.slug} />
               ))}
             </div>
           )}

@@ -1,12 +1,17 @@
 import Link from 'next/link'
 import { signOut } from '@/../auth'
+import { prisma } from '@/lib/prisma'
 
 async function handleLogout() {
   'use server'
   await signOut({ redirectTo: '/' })
 }
 
-export default function Sidebar() {
+export default async function Sidebar() {
+  const pendingCount = await prisma.comment.count({
+    where: { status: 'pending' },
+  })
+
   return (
     <aside className="w-[240px] shrink-0 bg-bg-card border-r border-dashed border-border-light p-6 flex flex-col">
       <h2 className="font-[family-name:var(--font-mono)] text-lg text-text mb-6">
@@ -52,9 +57,14 @@ export default function Sidebar() {
 
         <Link
           href="/admin/comments"
-          className="font-[family-name:var(--font-mono)] text-sm text-text-secondary hover:text-accent py-2 px-3 rounded-[var(--radius-sm)] transition-colors"
+          className="font-[family-name:var(--font-mono)] text-sm text-text-secondary hover:text-accent py-2 px-3 rounded-[var(--radius-sm)] transition-colors flex items-center gap-2"
         >
-          ○ 评论管理
+          <span>○ 评论管理</span>
+          {pendingCount > 0 && (
+            <span className="bg-mustard text-white text-xs px-1.5 py-0.5 rounded-full leading-none">
+              {pendingCount}
+            </span>
+          )}
         </Link>
 
         <div className="border-b border-dashed border-border-light my-2" />

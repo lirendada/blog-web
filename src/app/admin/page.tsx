@@ -16,6 +16,10 @@ export default async function AdminDashboard() {
     }),
   ])
 
+  const pendingComments = await prisma.comment.count({
+    where: { status: 'pending' },
+  })
+
   const draftCount = await prisma.article.count({
     where: { status: 'draft' },
   })
@@ -63,6 +67,20 @@ export default async function AdminDashboard() {
           </p>
         </div>
       </div>
+
+      {pendingComments > 0 && (
+        <Link
+          href="/admin/comments?status=pending"
+          className="block bg-mustard/10 border border-dashed border-mustard/30 rounded-[var(--radius-lg)] p-5 mb-10 hover:bg-mustard/20 transition-colors"
+        >
+          <p className="font-[family-name:var(--font-mono)] text-xs text-text-secondary mb-1">
+            待审核评论
+          </p>
+          <p className="font-[family-name:var(--font-mono)] text-[var(--text-3xl)] text-mustard">
+            {pendingComments}
+          </p>
+        </Link>
+      )}
 
       <div className="border-b border-dashed border-border-light mb-4" />
 

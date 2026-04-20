@@ -1,36 +1,52 @@
 import { prisma } from '@/lib/prisma'
-import { NextResponse, cookies } from 'next/server'
+import { NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 
 export async function POST(
   _request: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params
-
-  // Check cookie to prevent duplicate likes (UX-level only)
   const cookieStore = await cookies()
-  const liked = cookieStore.get(`liked_${slug}`)
-  if (liked) {
-    return NextResponse.json({ error: 'Already liked' }, { status: 409 })
-  }
+  const hasLiked = cookieStore.get(`liked_${slug}`)
 
-  // Atomic increment
-  const article = await prisma.article.updateMany({
-    where: { slug, status: 'published' },
-    data: { likeCount: { increment: 1 } },
+  const article = await prisma.article.findUnique({
+    where: { slug },
+    select: { id: true, likeCount: true },
   })
 
-  if (article.count === 0) {
+  if (!article) {
     return NextResponse.json({ error: 'Article not found' }, { status: 404 })
   }
 
-  // Set cookie (30 days)
   const response = NextResponse.json({ success: true })
-  response.cookies.set(`liked_${slug}`, '1', {
-    maxAge: 60 * 60 * 24 * 30,
-    path: '/',
-    sameSite: 'lax',
+
+  if (hasLiked) {
+    // Unlike: only decrement if count > 0
+    if (article.likeCount > 0) {
+      await prisma.article.update({
+        where: { id: article.id },
+        data: { likeCount: { decrement: 1 } },
+      })
+    }
+    response.cookies.set(`liked_${slug}`, '', { maxAge: 0, path: '/' })
+  } else {
+    // Like
+    await prisma.article.update({
+      where: { id: article.id },
+      data: { likeCount: { increment: 1 } },
+    })
+    response.cookies.set(`liked_${slug}`, '1', {
+      maxAge: 60 * 60 * 24 * 30,
+      path: '/',
+      sameSite: 'lax',
+    })
+  }
+
+  const updated = await prisma.article.findUnique({
+    where: { id: article.id },
+    select: { likeCount: true },
   })
 
-  return response
+  return NextResponse.json({ liked: !hasLiked, likeCount: Math.max(0, updated?.likeCount ?? 0) })
 }

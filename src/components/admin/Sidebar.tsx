@@ -51,6 +51,15 @@ export default function Sidebar() {
         <div className="border-b border-dashed border-border-light my-2" />
 
         <Link
+          href="/admin/comments"
+          className="font-[family-name:var(--font-mono)] text-sm text-text-secondary hover:text-accent py-2 px-3 rounded-[var(--radius-sm)] transition-colors"
+        >
+          ○ 评论管理
+        </Link>
+
+        <div className="border-b border-dashed border-border-light my-2" />
+
+        <Link
           href="/"
           className="font-[family-name:var(--font-mono)] text-sm text-text-secondary hover:text-accent py-2 px-3 rounded-[var(--radius-sm)] transition-colors mt-auto"
         >

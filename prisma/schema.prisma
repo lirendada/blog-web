@@ -98,3 +98,13 @@ model NewsItem {
   @@index([sourceId])
   @@index([publishedAt])
 }
+
+model Comment {
+  id        String   @id @default(cuid())
+  articleId String
+  author    String
+  content   String
+  createdAt DateTime @default(now())
+
+  @@index([articleId])
+}

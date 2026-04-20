@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
+import { cookies } from 'next/headers'
 import { markdownToHtml } from '@/lib/markdown'
 import { formatDate, calculateReadingTime } from '@/lib/utils'
 import ArticleContent from '@/components/blog/ArticleContent'
@@ -67,6 +68,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   const html = await markdownToHtml(article.content)
   const readingTime = calculateReadingTime(article.content)
+  const cookieStore = await cookies()
+  const initialLiked = cookieStore.has(`liked_${article.slug}`)
 
   // Fire-and-forget viewCount increment
   prisma.article
@@ -154,10 +157,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         </div>
 
         {/* Like button */}
-        <LikeButton slug={article.slug} initialCount={article.likeCount} />
+        <LikeButton slug={article.slug} initialCount={article.likeCount} initialLiked={initialLiked} />
 
         {/* Comments */}
-        <Comments />
+        <Comments slug={article.slug} />
       </div>
     </>
   )

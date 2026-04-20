@@ -1,0 +1,195 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-bg: #f8f6f2;
+  --color-bg-secondary: #f1eee8;
+  --color-bg-card: #fdfcfa;
+  --color-text: #4a4540;
+  --color-text-secondary: #8a8580;
+  --color-accent: #7d9070;
+  --color-accent-hover: #6b7d5e;
+  --color-accent-light: #e8ede5;
+  --color-rose: #c9908e;
+  --color-rose-light: #f0e3e2;
+  --color-mustard: #c4a35a;
+  --color-navy: #5b6b7a;
+  --color-border: #e2ded8;
+  --color-border-light: #edeae5;
+  --color-line: #eeebe6;
+  --color-shadow: rgba(74,69,64,0.06);
+  --color-stamp: #c14443;
+
+  --color-dark-bg: #1c1e1e;
+  --color-dark-bg-secondary: #242626;
+  --color-dark-bg-card: #2a2c2c;
+  --color-dark-text: #e8e5e0;
+  --color-dark-text-secondary: #9a9590;
+  --color-dark-accent: #8fa682;
+  --color-dark-accent-hover: #9db890;
+  --color-dark-accent-light: #2a3025;
+  --color-dark-rose: #d4a0a0;
+  --color-dark-rose-light: #3a2a2a;
+  --color-dark-border: #3a3835;
+  --color-dark-border-light: #302e2c;
+  --color-dark-shadow: rgba(0,0,0,0.25);
+  --color-dark-stamp: #d45755;
+
+  --font-heading: "Zen Maru Gothic", "Hiragino Maru Gothic", "Noto Serif SC", serif;
+  --font-body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: "Courier Prime", "Courier New", monospace;
+  --font-code: "JetBrains Mono", monospace;
+
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 30px;
+  --text-4xl: 36px;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 2px var(--color-shadow);
+  --shadow-md: 0 2px 8px var(--color-shadow);
+  --shadow-lg: 0 4px 16px var(--color-shadow);
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  line-height: 1.9;
+  transition: background-color 300ms ease, color 300ms ease;
+}
+
+.dark body {
+  color: var(--color-dark-text);
+  background-color: var(--color-dark-bg);
+}
+
+.bg-lined {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 31px,
+    var(--color-line) 31px,
+    var(--color-line) 32px
+  );
+}
+
+.dark .bg-lined {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 31px,
+    var(--color-dark-border) 31px,
+    var(--color-dark-border) 32px
+  );
+}
+
+.bg-lined-admin {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 27px,
+    var(--color-border-light) 27px,
+    var(--color-border-light) 28px
+  );
+}
+
+.dark .bg-lined-admin {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 27px,
+    var(--color-dark-border-light) 27px,
+    var(--color-dark-border-light) 28px
+  );
+}
+
+/* Article content styles */
+.article-content h1,
+.article-content h2,
+.article-content h3 {
+  font-family: var(--font-heading);
+  color: var(--color-text);
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+}
+
+.article-content h2 { font-size: 24px; }
+.article-content h3 { font-size: 20px; }
+
+.article-content p {
+  margin-bottom: 24px;
+  line-height: 1.9;
+}
+
+.article-content a {
+  color: var(--color-navy);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.article-content a:hover {
+  color: var(--color-accent);
+}
+
+.article-content blockquote {
+  border-left: 3px solid var(--color-accent);
+  background-color: var(--color-accent-light);
+  padding: 12px 20px;
+  margin: 20px 0;
+  border-radius: 0 6px 6px 0;
+}
+
+.dark .article-content blockquote {
+  background-color: var(--color-dark-accent-light);
+}
+
+.article-content pre {
+  background-color: var(--color-bg-secondary);
+  border-radius: 6px;
+  padding: 16px;
+  overflow-x: auto;
+  font-family: var(--font-code);
+  font-size: 14px;
+  margin: 20px 0;
+}
+
+.dark .article-content pre {
+  background-color: var(--color-dark-bg-secondary);
+}
+
+.article-content code {
+  font-family: var(--font-code);
+  font-size: 0.9em;
+}
+
+.article-content :not(pre) > code {
+  background-color: var(--color-bg-secondary);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.article-content img {
+  border-radius: 6px;
+  box-shadow: var(--shadow-md);
+  max-width: 100%;
+}
+
+.article-content ul,
+.article-content ol {
+  padding-left: 24px;
+  margin-bottom: 24px;
+}
+
+.article-content li {
+  margin-bottom: 8px;
+}

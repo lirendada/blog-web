@@ -1,6 +1,7 @@
 import { auth } from '@/../auth'
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 
 export async function GET(
   _request: Request,
@@ -117,6 +118,18 @@ export async function PUT(
       },
     })
 
+    revalidatePath('/')
+    revalidatePath('/articles')
+    revalidatePath('/archives')
+    revalidatePath('/tags')
+    revalidatePath('/sitemap.xml')
+    if (existing.slug) {
+      revalidatePath(`/articles/${existing.slug}`)
+    }
+    if (slug && slug !== existing.slug) {
+      revalidatePath(`/articles/${slug}`)
+    }
+
     return NextResponse.json({
       ...result,
       tags: result!.tags.map((at) => at.tag),
@@ -145,6 +158,15 @@ export async function DELETE(
     }
 
     await prisma.article.delete({ where: { id } })
+
+    revalidatePath('/')
+    revalidatePath('/articles')
+    revalidatePath('/archives')
+    revalidatePath('/tags')
+    revalidatePath('/sitemap.xml')
+    if (existing.slug) {
+      revalidatePath(`/articles/${existing.slug}`)
+    }
 
     return NextResponse.json({ success: true })
   } catch (error) {

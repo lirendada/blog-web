@@ -8,12 +8,23 @@ import { formatDate, calculateReadingTime } from '@/lib/utils'
 import ArticleContent from '@/components/blog/ArticleContent'
 import TableOfContents from '@/components/blog/TableOfContents'
 import LikeButton from '@/components/blog/LikeButton'
+import ViewTracker from '@/components/blog/ViewTracker'
 import Comments from '@/components/blog/Comments'
 import TagPill from '@/components/ui/TagPill'
 import ReadingProgress from '@/components/ui/ReadingProgress'
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>
+}
+
+export const revalidate = 3600
+
+export async function generateStaticParams() {
+  const articles = await prisma.article.findMany({
+    where: { status: 'published' },
+    select: { slug: true },
+  })
+  return articles.map((a) => ({ slug: a.slug }))
 }
 
 async function getArticle(slug: string) {
@@ -111,16 +122,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     },
   })
 
-  // Fire-and-forget viewCount increment
-  prisma.article
-    .update({
-      where: { id: article.id },
-      data: { viewCount: { increment: 1 } },
-    })
-    .catch(() => {
-      // silently ignore
-    })
-
   return (
     <>
       <script
@@ -128,6 +129,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <ReadingProgress />
+      <ViewTracker slug={article.slug} />
 
       <div className="max-w-[680px] mx-auto px-6 pt-8 pb-16">
         {/* Back link */}

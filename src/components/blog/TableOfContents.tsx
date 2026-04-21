@@ -11,15 +11,19 @@ interface TocItem {
 function extractHeadings(html: string): TocItem[] {
   const headings: TocItem[] = []
   const regex = /<(h[23])\s*>([^<]*)<\/(h[23])>/g
+  const idCount = new Map<string, number>()
   let match: RegExpExecArray | null
 
   while ((match = regex.exec(html)) !== null) {
     const level = match[1] === 'h2' ? 2 : 3
     const text = match[2].trim()
-    const id = text
+    const baseId = text
       .toLowerCase()
-      .replace(/[^a-z0-9\u4e00-\u9fff]+/g, '-')
+      .replace(/[^a-z0-9一-鿿]+/g, '-')
       .replace(/^-|-$/g, '')
+    const count = idCount.get(baseId) ?? 0
+    idCount.set(baseId, count + 1)
+    const id = count > 0 ? `${baseId}-${count}` : baseId
     headings.push({ id, text, level })
   }
 

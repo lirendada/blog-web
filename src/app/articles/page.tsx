@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: '所有博客文章列表。',
 }
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 1800
 
 const PAGE_SIZE = 10
 

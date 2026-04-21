@@ -3,13 +3,11 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import DarkModeToggle from '@/components/ui/DarkModeToggle'
 import SearchDialog from '@/components/ui/SearchDialog'
 
 const navLinks = [
   { href: '/articles', label: '博客' },
   { href: '/archives', label: '归档' },
-  { href: '/tags', label: '标签' },
   { href: '/news', label: '资讯' },
   { href: '/about', label: '关于' },
 ]
@@ -93,9 +91,6 @@ export default function Navbar() {
             )
           })}
 
-          <div className="ml-2 border-l border-dashed border-border-light dark:border-dark-border-light pl-4">
-            <DarkModeToggle />
-          </div>
         </div>
       </nav>
 

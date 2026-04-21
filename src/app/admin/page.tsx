@@ -1,31 +1,40 @@
-import { prisma } from '@/lib/prisma'
+'use client'
+
+import useSWR from 'swr'
 import Link from 'next/link'
+import { fetcher } from '@/lib/fetcher'
 
-export default async function AdminDashboard() {
-  const [totalArticles, recentArticles] = await Promise.all([
-    prisma.article.count(),
-    prisma.article.findMany({
-      take: 5,
-      orderBy: { updatedAt: 'desc' },
-      include: {
-        category: { select: { name: true } },
-        tags: {
-          include: { tag: { select: { name: true } } },
-        },
-      },
-    }),
-  ])
+interface DashboardData {
+  totalArticles: number
+  recentArticles: {
+    id: string
+    title: string
+    status: string
+    updatedAt: string
+    category: { name: string } | null
+  }[]
+  totalViews: number
+  pendingComments: number
+  draftCount: number
+  publishedCount: number
+}
 
-  const pendingComments = await prisma.comment.count({
-    where: { status: 'pending' },
+export default function AdminDashboard() {
+  const { data, isLoading } = useSWR<DashboardData>('/api/admin/dashboard', fetcher, {
+    dedupingInterval: 120000,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
   })
 
-  const draftCount = await prisma.article.count({
-    where: { status: 'draft' },
-  })
-  const publishedCount = await prisma.article.count({
-    where: { status: 'published' },
-  })
+  if (isLoading || !data) {
+    return (
+      <div className="max-w-4xl">
+        <div className="font-[family-name:var(--font-mono)] text-sm text-text-secondary py-12 text-center">
+          加载中...
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-4xl">
@@ -41,13 +50,13 @@ export default async function AdminDashboard() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-3 gap-6 mb-10">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
         <div className="bg-bg-card rounded-[var(--radius-lg)] p-5 shadow-sm">
           <p className="font-[family-name:var(--font-mono)] text-xs text-text-secondary mb-1">
             全部文章
           </p>
           <p className="font-[family-name:var(--font-mono)] text-[var(--text-3xl)] text-text">
-            {totalArticles}
+            {data.totalArticles}
           </p>
         </div>
         <div className="bg-bg-card rounded-[var(--radius-lg)] p-5 shadow-sm">
@@ -55,7 +64,7 @@ export default async function AdminDashboard() {
             已发布
           </p>
           <p className="font-[family-name:var(--font-mono)] text-[var(--text-3xl)] text-accent">
-            {publishedCount}
+            {data.publishedCount}
           </p>
         </div>
         <div className="bg-bg-card rounded-[var(--radius-lg)] p-5 shadow-sm">
@@ -63,12 +72,23 @@ export default async function AdminDashboard() {
             草稿
           </p>
           <p className="font-[family-name:var(--font-mono)] text-[var(--text-3xl)] text-rose">
-            {draftCount}
+            {data.draftCount}
           </p>
         </div>
+        <Link
+          href="/admin/stats"
+          className="bg-bg-card rounded-[var(--radius-lg)] p-5 shadow-sm hover:shadow-md transition-shadow"
+        >
+          <p className="font-[family-name:var(--font-mono)] text-xs text-text-secondary mb-1">
+            总浏览量
+          </p>
+          <p className="font-[family-name:var(--font-mono)] text-[var(--text-3xl)] text-accent">
+            {data.totalViews.toLocaleString()}
+          </p>
+        </Link>
       </div>
 
-      {pendingComments > 0 && (
+      {data.pendingComments > 0 && (
         <Link
           href="/admin/comments?status=pending"
           className="block bg-mustard/10 border border-dashed border-mustard/30 rounded-[var(--radius-lg)] p-5 mb-10 hover:bg-mustard/20 transition-colors"
@@ -77,7 +97,7 @@ export default async function AdminDashboard() {
             待审核评论
           </p>
           <p className="font-[family-name:var(--font-mono)] text-[var(--text-3xl)] text-mustard">
-            {pendingComments}
+            {data.pendingComments}
           </p>
         </Link>
       )}
@@ -89,7 +109,7 @@ export default async function AdminDashboard() {
       </h2>
 
       <div className="space-y-0">
-        {recentArticles.map((article) => (
+        {data.recentArticles.map((article) => (
           <div
             key={article.id}
             className="flex items-center justify-between py-3 border-b border-dashed border-border-light"
@@ -128,7 +148,7 @@ export default async function AdminDashboard() {
         ))}
       </div>
 
-      {recentArticles.length === 0 && (
+      {data.recentArticles.length === 0 && (
         <p className="text-text-secondary font-[family-name:var(--font-mono)] text-sm py-8 text-center">
           还没有文章，点击右上角开始写吧
         </p>

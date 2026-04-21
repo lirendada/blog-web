@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
   }
 }
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 export default async function TagArticlesPage({ params }: TagPageProps) {
   const { slug } = await params
@@ -32,7 +32,7 @@ export default async function TagArticlesPage({ params }: TagPageProps) {
       status: 'published',
       tags: { some: { tagId: tag.id } },
     },
-    orderBy: { publishedAt: 'desc' },
+    orderBy: { publishedAt: 'asc' },
     include: {
       category: { select: { name: true, slug: true } },
       tags: { include: { tag: { select: { name: true, slug: true } } } },
@@ -49,7 +49,7 @@ export default async function TagArticlesPage({ params }: TagPageProps) {
       </Link>
 
       <h1 className="font-heading text-3xl text-text dark:text-dark-text mb-2">
-        #{tag.name}
+        {tag.name}
       </h1>
       <p className="font-mono text-sm text-text-secondary dark:text-dark-text-secondary mb-8">
         共 {articles.length} 篇文章

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/archives' },
 }
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 export default async function ArchivesPage() {
   const articles = await prisma.article.findMany({

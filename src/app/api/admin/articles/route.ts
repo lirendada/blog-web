@@ -2,6 +2,7 @@ import { auth } from '@/../auth'
 import { prisma } from '@/lib/prisma'
 import { generateSlug } from '@/lib/utils'
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 
 export async function GET(request: Request) {
   const session = await auth()
@@ -126,6 +127,12 @@ export async function POST(request: Request) {
         },
       },
     })
+
+    revalidatePath('/')
+    revalidatePath('/articles')
+    revalidatePath('/archives')
+    revalidatePath('/tags')
+    revalidatePath('/sitemap.xml')
 
     return NextResponse.json({
       ...result,

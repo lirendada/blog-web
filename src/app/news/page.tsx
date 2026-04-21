@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { prisma } from '@/lib/prisma'
-import { formatDate } from '@/lib/utils'
+import { formatDateHeader, getDateKey } from '@/lib/utils'
 import Pagination from '@/components/ui/Pagination'
 import Link from 'next/link'
 
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: 'AI 与科技资讯聚合。',
 }
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 900
 
 const PAGE_SIZE = 20
 
@@ -38,13 +38,19 @@ export default async function NewsPage({ searchParams }: PageProps) {
     }),
   ])
 
+  // Group items by date
+  const grouped = items.reduce<Record<string, typeof items>>((acc, item) => {
+    const key = getDateKey(item.publishedAt)
+    if (!acc[key]) acc[key] = []
+    acc[key].push(item)
+    return acc
+  }, {})
+
   const totalPages = Math.ceil(total / PAGE_SIZE)
 
   return (
     <div className="max-w-[960px] w-full mx-auto px-6">
-      <h1
-        className="font-heading text-3xl text-text dark:text-dark-text pt-10 pb-6"
-      >
+      <h1 className="font-heading text-3xl text-text dark:text-dark-text pt-10 pb-6">
         资讯
       </h1>
 
@@ -85,54 +91,69 @@ export default async function NewsPage({ searchParams }: PageProps) {
 
       <div className="border-b border-dashed border-border-light dark:border-dark-border-light mb-8" />
 
-      {/* 资讯列表 */}
+      {/* 按日期分组的资讯列表 */}
       {items.length > 0 ? (
-        <div className="flex flex-col gap-4 pb-8">
-          {items.map((item) => (
-            <a
-              key={item.id}
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="
-                group block p-4
-                border border-dashed border-border-light dark:border-dark-border-light
-                rounded-[var(--radius-md)]
-                hover:border-accent dark:hover:border-dark-accent
-                transition-all duration-200 ease-out
-                hover:-translate-y-0.5 hover:shadow-md
-              "
-            >
-              <h3
-                className="
-                  font-heading text-lg
-                  text-text dark:text-dark-text
-                  group-hover:text-accent dark:group-hover:text-dark-accent
-                  transition-colors
-                  line-clamp-2
-                  mb-2
-                "
-              >
-                {item.title}
-              </h3>
-              <div
-                className="
-                  font-mono text-xs
-                  text-text-secondary dark:text-dark-text-secondary
-                  flex items-center gap-3
-                "
-              >
-                {item.sourceName && (
-                  <span className="inline-block bg-accent-light dark:bg-dark-accent-light text-accent dark:text-dark-accent px-2 py-0.5 rounded-[var(--radius-full)]">
-                    {item.sourceName}
-                  </span>
-                )}
-                {item.publishedAt && <span>{formatDate(item.publishedAt)}</span>}
-                <span className="ml-auto text-accent dark:text-dark-accent opacity-0 group-hover:opacity-100 transition-opacity">
-                  阅读原文 →
-                </span>
+        <div className="flex flex-col gap-8 pb-8">
+          {Object.entries(grouped).map(([dateKey, groupItems]) => (
+            <div key={dateKey}>
+              <h2 className="font-mono text-sm text-text-secondary dark:text-dark-text-secondary mb-4 pb-2 border-b border-dashed border-border-light dark:border-dark-border-light">
+                {groupItems[0].publishedAt
+                  ? formatDateHeader(groupItems[0].publishedAt)
+                  : '未知日期'}
+              </h2>
+              <div className="flex flex-col gap-3">
+                {groupItems.map((item) => (
+                  <a
+                    key={item.id}
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="
+                      group block p-4
+                      border border-dashed border-border-light dark:border-dark-border-light
+                      rounded-[var(--radius-md)]
+                      hover:border-accent dark:hover:border-dark-accent
+                      transition-all duration-200 ease-out
+                      hover:-translate-y-0.5 hover:shadow-md
+                    "
+                  >
+                    <h3
+                      className="
+                        font-heading text-lg
+                        text-text dark:text-dark-text
+                        group-hover:text-accent dark:group-hover:text-dark-accent
+                        transition-colors
+                        line-clamp-2
+                        mb-2
+                      "
+                    >
+                      {item.title}
+                    </h3>
+                    {item.description && (
+                      <p className="font-mono text-sm text-text-secondary dark:text-dark-text-secondary line-clamp-2 leading-relaxed mb-2">
+                        {item.description}
+                      </p>
+                    )}
+                    <div
+                      className="
+                        font-mono text-xs
+                        text-text-secondary dark:text-dark-text-secondary
+                        flex items-center gap-3
+                      "
+                    >
+                      {item.sourceName && (
+                        <span className="inline-block bg-accent-light dark:bg-dark-accent-light text-accent dark:text-dark-accent px-2 py-0.5 rounded-[var(--radius-full)]">
+                          {item.sourceName}
+                        </span>
+                      )}
+                      <span className="ml-auto text-accent dark:text-dark-accent opacity-0 group-hover:opacity-100 transition-opacity">
+                        阅读原文 →
+                      </span>
+                    </div>
+                  </a>
+                ))}
               </div>
-            </a>
+            </div>
           ))}
         </div>
       ) : (

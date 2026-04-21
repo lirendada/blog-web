@@ -1,16 +1,18 @@
+'use client'
+
 import Link from 'next/link'
-import { signOut } from '@/../auth'
-import { prisma } from '@/lib/prisma'
+import { signOut } from 'next-auth/react'
+import useSWR from 'swr'
+import { fetcher } from '@/lib/fetcher'
 
-async function handleLogout() {
-  'use server'
-  await signOut({ redirectTo: '/' })
-}
+export default function Sidebar() {
+  const { data } = useSWR<{ pendingCount: number }>(
+    '/api/admin/comments/pending-count',
+    fetcher,
+    { dedupingInterval: 60000 },
+  )
 
-export default async function Sidebar() {
-  const pendingCount = await prisma.comment.count({
-    where: { status: 'pending' },
-  })
+  const pendingCount = data?.pendingCount ?? 0
 
   return (
     <aside className="w-[240px] shrink-0 bg-bg-card border-r border-dashed border-border-light p-6 flex flex-col">
@@ -70,6 +72,24 @@ export default async function Sidebar() {
         <div className="border-b border-dashed border-border-light my-2" />
 
         <Link
+          href="/admin/stats"
+          className="font-[family-name:var(--font-mono)] text-sm text-text-secondary hover:text-accent py-2 px-3 rounded-[var(--radius-sm)] transition-colors"
+        >
+          ○ 统计
+        </Link>
+
+        <div className="border-b border-dashed border-border-light my-2" />
+
+        <Link
+          href="/admin/settings"
+          className="font-[family-name:var(--font-mono)] text-sm text-text-secondary hover:text-accent py-2 px-3 rounded-[var(--radius-sm)] transition-colors"
+        >
+          ○ 设置
+        </Link>
+
+        <div className="border-b border-dashed border-border-light my-2" />
+
+        <Link
           href="/"
           className="font-[family-name:var(--font-mono)] text-sm text-text-secondary hover:text-accent py-2 px-3 rounded-[var(--radius-sm)] transition-colors mt-auto"
         >
@@ -78,14 +98,12 @@ export default async function Sidebar() {
       </nav>
 
       <div className="border-t border-dashed border-border-light pt-4 mt-4">
-        <form action={handleLogout}>
-          <button
-            type="submit"
-            className="font-[family-name:var(--font-mono)] text-sm text-text-secondary hover:text-rose py-2 px-3 transition-colors cursor-pointer w-full text-left"
-          >
-            退出登录
-          </button>
-        </form>
+        <button
+          onClick={() => signOut({ callbackUrl: '/' })}
+          className="font-[family-name:var(--font-mono)] text-sm text-text-secondary hover:text-rose py-2 px-3 transition-colors cursor-pointer w-full text-left"
+        >
+          退出登录
+        </button>
       </div>
     </aside>
   )

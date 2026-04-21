@@ -2,7 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { formatDate } from '@/lib/utils'
-import ArticleCard from '@/components/blog/ArticleCard'
+import Typewriter from '@/components/ui/Typewriter'
+import TagCloud from '@/components/ui/TagCloud'
+import StickerCard from '@/components/ui/StickerCard'
 
 export const metadata: Metadata = {
   title: 'my_blog - 个人博客',
@@ -37,200 +39,136 @@ function JsonLd() {
   )
 }
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 1800
 
-async function getLatestArticles() {
-  const articles = await prisma.article.findMany({
-    where: { status: 'published' },
-    orderBy: { publishedAt: 'desc' },
-    take: 3,
+async function getTags() {
+  const tags = await prisma.tag.findMany({
     include: {
-      category: { select: { id: true, name: true, slug: true } },
-      tags: {
-        include: {
-          tag: { select: { id: true, name: true, slug: true } },
-        },
-      },
+      _count: { select: { articles: true } },
     },
+    orderBy: { name: 'asc' },
   })
-  return articles
+  return tags.filter((t) => t._count.articles > 0)
 }
 
 async function getHotArticles() {
   const articles = await prisma.article.findMany({
     where: { status: 'published' },
     orderBy: { viewCount: 'desc' },
-    take: 5,
+    take: 6,
     select: {
       id: true,
       title: true,
       slug: true,
       viewCount: true,
       publishedAt: true,
+      tags: {
+        include: {
+          tag: { select: { name: true, slug: true } },
+        },
+      },
     },
   })
-  return articles
+  return articles.map((a) => ({
+    ...a,
+    tags: a.tags.map((at) => at.tag),
+  }))
 }
 
 export default async function HomePage() {
-  const [articles, hotArticles] = await Promise.all([
-    getLatestArticles(),
+  const [tags, hotArticles] = await Promise.all([
+    getTags(),
     getHotArticles(),
   ])
-  const latestArticle = articles[0]
+
+  const maxCount = tags.length > 0 ? Math.max(...tags.map((t) => t._count.articles)) : 1
 
   return (
     <>
     <JsonLd />
     <div className="max-w-[960px] w-full mx-auto px-6">
-        {/* Hero - 个人名片 */}
-        <section className="py-10">
+        {/* Hero */}
+        <section className="py-20 md:py-28 text-center">
           <h1
             className="
               font-heading
-              text-4xl
+              text-5xl md:text-6xl
               text-text dark:text-dark-text
-              mb-2
+              mb-6
             "
           >
             my_blog
           </h1>
+          <div
+            className="
+              font-mono text-lg md:text-xl
+              text-accent dark:text-dark-accent
+              mb-3 min-h-[1.8em]
+              flex items-center justify-center
+            "
+          >
+            <Typewriter
+              texts={['写字、编码、用爱发电。', '记录技术与生活。', 'Keep it simple.']}
+              speed={100}
+              deleteSpeed={50}
+              pauseDuration={2500}
+              cursorClassName="text-accent dark:text-dark-accent font-light"
+            />
+          </div>
           <p
             className="
               font-mono text-sm
               text-text-secondary dark:text-dark-text-secondary
-              mb-4
+              max-w-md mx-auto
             "
           >
-            写字、编码、用爱发电。
+            一个关于编程、技术与日常思考的个人空间
           </p>
-          {latestArticle && (
-            <Link
-              href={`/articles/${latestArticle.slug}`}
-              className="
-                font-mono text-sm text-accent dark:text-dark-accent
-                hover:text-accent-hover dark:hover:text-dark-accent-hover
-                transition-colors
-              "
-            >
-              → 最新文章: {latestArticle.title}
-              {latestArticle.publishedAt && (
-                <span className="text-text-secondary dark:text-dark-text-secondary ml-2">
-                  {formatDate(latestArticle.publishedAt)}
-                </span>
-              )}
-            </Link>
-          )}
         </section>
 
-        {/* 虚线分隔 */}
-        <div className="border-b border-dashed border-border-light dark:border-dark-border-light mb-8" />
+        {/* 标签云 */}
+        {tags.length > 0 && (
+          <section className="pb-10">
+            <TagCloud tags={tags} maxCount={maxCount} />
+          </section>
+        )}
 
-        {/* 双栏内容 */}
-        <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-8 pb-12">
-          {/* 左栏: 最新文章 */}
-          <section>
-            <h2
+        {/* 热门文章 */}
+        <section className="pb-12">
+          <h2
+            className="
+              font-heading text-2xl
+              text-text dark:text-dark-text
+              mb-6
+            "
+          >
+            热门文章
+          </h2>
+          {hotArticles.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {hotArticles.map((article, i) => (
+                <StickerCard
+                  key={article.id}
+                  href={`/articles/${article.slug}`}
+                  index={i}
+                  title={article.title}
+                  viewCount={article.viewCount}
+                  date={article.publishedAt ? formatDate(article.publishedAt) : null}
+                  tags={article.tags}
+                />
+              ))}
+            </div>
+          ) : (
+            <p
               className="
-                font-heading text-2xl
-                text-text dark:text-dark-text
-                mb-6
+                font-mono text-sm
+                text-text-secondary dark:text-dark-text-secondary
               "
             >
-              最新文章
-            </h2>
-            {articles.length > 0 ? (
-              <div className="flex flex-col gap-6">
-                {articles.map((article) => (
-                  <ArticleCard key={article.id} article={article} />
-                ))}
-              </div>
-            ) : (
-              <p
-                className="
-                  font-mono text-sm
-                  text-text-secondary dark:text-dark-text-secondary
-                "
-              >
-                暂无文章
-              </p>
-            )}
-          </section>
-
-          {/* 右栏: 热门文章 */}
-          <section>
-            <h2
-              className="
-                font-heading text-2xl
-                text-text dark:text-dark-text
-                mb-6
-              "
-            >
-              热门文章
-            </h2>
-            {hotArticles.length > 0 ? (
-              <div className="flex flex-col gap-3">
-                {hotArticles.map((article, i) => (
-                  <Link
-                    key={article.id}
-                    href={`/articles/${article.slug}`}
-                    className="
-                      group flex items-start gap-3 p-3
-                      border border-dashed border-border-light dark:border-dark-border-light
-                      rounded-[var(--radius-md)]
-                      hover:border-accent dark:hover:border-dark-accent
-                      transition-colors
-                    "
-                  >
-                    <span
-                      className="
-                        font-mono text-sm font-bold
-                        text-accent dark:text-dark-accent
-                        mt-0.5 shrink-0
-                      "
-                    >
-                      {String(i + 1).padStart(2, '0')}
-                    </span>
-                    <div className="min-w-0">
-                      <h3
-                        className="
-                          font-heading text-base
-                          text-text dark:text-dark-text
-                          group-hover:text-accent dark:group-hover:text-dark-accent
-                          transition-colors
-                          line-clamp-2
-                        "
-                      >
-                        {article.title}
-                      </h3>
-                      <div
-                        className="
-                          font-mono text-xs
-                          text-text-secondary dark:text-dark-text-secondary
-                          mt-1 flex items-center gap-2
-                        "
-                      >
-                        <span>{article.viewCount} 次阅读</span>
-                        {article.publishedAt && (
-                          <span>{formatDate(article.publishedAt)}</span>
-                        )}
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <p
-                className="
-                  font-mono text-sm
-                  text-text-secondary dark:text-dark-text-secondary
-                "
-              >
-                暂无文章
-              </p>
-            )}
-          </section>
-        </div>
+              暂无文章
+            </p>
+          )}
+        </section>
     </div>
     </>
   )

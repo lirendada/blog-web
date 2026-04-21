@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import TagPill from '@/components/ui/TagPill'
 import { formatDate, calculateReadingTime } from '@/lib/utils'
 
@@ -31,7 +32,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
         {/* Cover image */}
         {article.coverImage && (
           <div className="shrink-0">
-            <img
+            <Image
               src={article.coverImage}
               alt={article.title}
               width={200}
@@ -40,7 +41,6 @@ export default function ArticleCard({ article }: ArticleCardProps) {
                 rounded-[var(--radius-md)]
                 saturate-90
                 object-cover
-                w-[200px] h-[150px]
               "
             />
           </div>
@@ -77,7 +77,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
           {article.tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-2">
               {article.tags.map((t) => (
-                <TagPill key={t.tag.slug} name={t.tag.name} slug={t.tag.slug} />
+                <TagPill key={t.tag.slug} name={t.tag.name} slug={t.tag.slug} linked={false} />
               ))}
             </div>
           )}

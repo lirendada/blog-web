@@ -20,6 +20,7 @@ export async function GET(request: Request) {
         id: true,
         title: true,
         url: true,
+        description: true,
         sourceName: true,
         sourceId: true,
         publishedAt: true,

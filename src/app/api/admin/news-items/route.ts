@@ -37,7 +37,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { title, url, sourceName, publishedAt } = await request.json()
+    const { title, url, sourceName, publishedAt, description } = await request.json()
     if (!title || !url) {
       return NextResponse.json({ error: 'Title and URL are required' }, { status: 400 })
     }
@@ -54,6 +54,7 @@ export async function POST(request: Request) {
       data: {
         title,
         url,
+        description: description || null,
         sourceId: source.id,
         sourceName: sourceName || source.name,
         publishedAt: publishedAt ? new Date(publishedAt) : new Date(),

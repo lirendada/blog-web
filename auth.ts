@@ -6,7 +6,8 @@ import bcrypt from 'bcryptjs'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
-  session: { strategy: 'jwt' },
+  session: { strategy: 'jwt', maxAge: 24 * 60 * 60 },
+  jwt: { maxAge: 24 * 60 * 60 },
   providers: [
     Credentials({
       credentials: {

@@ -50,3 +50,5 @@ prisma/migrations/
 
 # docker
 postgres-data/
+public/notes-img
+.context/

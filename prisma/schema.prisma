@@ -30,6 +30,7 @@ model Article {
   category    Category?    @relation(fields: [categoryId], references: [id])
   tags        ArticleTag[]
   comments    Comment[]
+  dailyViews  ArticleDailyView[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
@@ -88,6 +89,7 @@ model NewsItem {
   id          String     @id @default(cuid())
   title       String
   url         String
+  description String?
   sourceId    String
   source      NewsSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
   sourceName  String?
@@ -117,4 +119,28 @@ model Comment {
   @@index([status])
   @@index([parentId])
   @@index([ip, createdAt])
+}
+
+model DailyView {
+  id        String   @id @default(cuid())
+  date      DateTime @unique
+  views     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([date])
+}
+
+model ArticleDailyView {
+  id        String   @id @default(cuid())
+  articleId String
+  date      DateTime
+  views     Int      @default(0)
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([articleId, date])
+  @@index([date])
+  @@index([articleId])
 }

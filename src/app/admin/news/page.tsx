@@ -17,6 +17,7 @@ type NewsItem = {
   id: string
   title: string
   url: string
+  description: string | null
   sourceName: string | null
   publishedAt: string | null
 }
@@ -37,6 +38,7 @@ export default function AdminNewsPage() {
   const [itemTitle, setItemTitle] = useState('')
   const [itemUrl, setItemUrl] = useState('')
   const [itemSourceName, setItemSourceName] = useState('')
+  const [itemDescription, setItemDescription] = useState('')
 
   const loadSources = useCallback(async () => {
     try {
@@ -94,8 +96,8 @@ export default function AdminNewsPage() {
       })
       const data = await res.json()
       if (data.results) {
-        setFetchResults(data.results.map((r: { source: string; fetched: number; error: string | null }) =>
-          r.error ? `${r.source}: Error - ${r.error}` : `${r.source}: ${r.fetched} items`
+        setFetchResults(data.results.map((r: { source: string; fetched: number; skipped?: number; error: string | null }) =>
+          r.error ? `${r.source}: Error - ${r.error}` : `${r.source}: ${r.fetched} 条 AI 资讯${r.skipped ? `, 过滤 ${r.skipped} 条` : ''}`
         ))
       }
       loadSources()
@@ -112,12 +114,13 @@ export default function AdminNewsPage() {
     const res = await fetch('/api/admin/news-items', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: itemTitle.trim(), url: itemUrl.trim(), sourceName: itemSourceName.trim() }),
+      body: JSON.stringify({ title: itemTitle.trim(), url: itemUrl.trim(), sourceName: itemSourceName.trim(), description: itemDescription.trim() }),
     })
     if (res.ok) {
       setItemTitle('')
       setItemUrl('')
       setItemSourceName('')
+      setItemDescription('')
       loadItems()
     } else {
       const data = await res.json()
@@ -200,6 +203,7 @@ export default function AdminNewsPage() {
             <input value={itemTitle} onChange={(e) => setItemTitle(e.target.value)} placeholder="标题" className="flex-1 min-w-[200px] bg-transparent border-0 border-b border-dashed border-border-light dark:border-dark-border-light focus:border-accent dark:focus:border-dark-accent focus:outline-none font-[family-name:var(--font-mono)] text-sm py-1 px-1 text-text dark:text-dark-text placeholder:text-text-secondary dark:placeholder:text-dark-text-secondary transition-colors" />
             <input value={itemUrl} onChange={(e) => setItemUrl(e.target.value)} placeholder="URL" className="flex-1 min-w-[200px] bg-transparent border-0 border-b border-dashed border-border-light dark:border-dark-border-light focus:border-accent dark:focus:border-dark-accent focus:outline-none font-[family-name:var(--font-mono)] text-sm py-1 px-1 text-text dark:text-dark-text placeholder:text-text-secondary dark:placeholder:text-dark-text-secondary transition-colors" />
             <input value={itemSourceName} onChange={(e) => setItemSourceName(e.target.value)} placeholder="来源名 (可选)" className="w-36 bg-transparent border-0 border-b border-dashed border-border-light dark:border-dark-border-light focus:border-accent dark:focus:border-dark-accent focus:outline-none font-[family-name:var(--font-mono)] text-sm py-1 px-1 text-text dark:text-dark-text placeholder:text-text-secondary dark:placeholder:text-dark-text-secondary transition-colors" />
+            <input value={itemDescription} onChange={(e) => setItemDescription(e.target.value)} placeholder="摘要 (可选)" className="flex-1 min-w-[200px] bg-transparent border-0 border-b border-dashed border-border-light dark:border-dark-border-light focus:border-accent dark:focus:border-dark-accent focus:outline-none font-[family-name:var(--font-mono)] text-sm py-1 px-1 text-text dark:text-dark-text placeholder:text-text-secondary dark:placeholder:text-dark-text-secondary transition-colors" />
             <button onClick={handleAddItem} className="font-[family-name:var(--font-mono)] text-xs text-accent dark:text-dark-accent hover:text-accent-hover dark:hover:text-dark-accent-hover py-1 px-3 border border-dashed border-accent dark:border-dark-accent rounded-[var(--radius-sm)] transition-colors cursor-pointer">+ 添加</button>
           </div>
         </div>
@@ -216,6 +220,11 @@ export default function AdminNewsPage() {
                   <a href={item.url} target="_blank" rel="noopener noreferrer" className="font-[family-name:var(--font-mono)] text-sm text-text dark:text-dark-text hover:text-accent dark:hover:text-dark-accent transition-colors line-clamp-1">
                     {item.title}
                   </a>
+                  {item.description && (
+                    <div className="font-[family-name:var(--font-mono)] text-xs text-text-secondary dark:text-dark-text-secondary line-clamp-1 mt-0.5">
+                      {item.description}
+                    </div>
+                  )}
                   <div className="font-[family-name:var(--font-mono)] text-xs text-text-secondary dark:text-dark-text-secondary mt-0.5">
                     {item.sourceName || 'Unknown'}
                     {item.publishedAt && ` · ${new Date(item.publishedAt).toLocaleDateString('zh-CN')}`}

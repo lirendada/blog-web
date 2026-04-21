@@ -111,12 +111,21 @@ console.log(greeting)
 
   console.log('Seeded: about page config')
 
-  // Seed default RSS sources
+  // Seed default RSS sources — 中文 AI 资讯专用
   const rssSources = [
-    { name: 'Hacker News', feedUrl: 'https://hnrss.org/frontpage', siteUrl: 'https://news.ycombinator.com' },
-    { name: 'TechCrunch AI', feedUrl: 'https://techcrunch.com/category/artificial-intelligence/feed/', siteUrl: 'https://techcrunch.com' },
-    { name: 'The Verge AI', feedUrl: 'https://www.theverge.com/rss/ai-artificial-intelligence/index.xml', siteUrl: 'https://www.theverge.com' },
+    // 纯 AI 媒体（内容全相关）
+    { name: '机器之心', feedUrl: 'https://www.jiqizhixin.com/rss', siteUrl: 'https://www.jiqizhixin.com' },
+    { name: '量子位', feedUrl: 'https://www.qbitai.com/feed', siteUrl: 'https://www.qbitai.com' },
+    // 科技综合站（配合 AI 关键词过滤）
     { name: '36氪', feedUrl: 'https://36kr.com/feed', siteUrl: 'https://36kr.com' },
+    { name: 'IT之家', feedUrl: 'https://www.ithome.com/rss/', siteUrl: 'https://www.ithome.com' },
+    { name: '极客公园', feedUrl: 'https://www.geekpark.net/rss', siteUrl: 'https://www.geekpark.net' },
+    { name: 'InfoQ', feedUrl: 'https://www.infoq.cn/feed', siteUrl: 'https://www.infoq.cn' },
+    { name: '少数派', feedUrl: 'https://sspai.com/feed', siteUrl: 'https://sspai.com' },
+    // RSSHub 路由（AI 专题）
+    { name: '掘金 AI', feedUrl: 'https://rsshub.app/juejin/tag/AI', siteUrl: 'https://juejin.cn' },
+    { name: '知乎 AI 热门', feedUrl: 'https://rsshub.app/zhihu/topic/19551275', siteUrl: 'https://www.zhihu.com' },
+    { name: 'V2EX 技术', feedUrl: 'https://rsshub.app/v2ex/topics/tech', siteUrl: 'https://www.v2ex.com' },
   ]
 
   for (const source of rssSources) {

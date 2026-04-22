@@ -20,11 +20,18 @@ interface DashboardData {
 }
 
 export default function AdminDashboard() {
-  const { data, isLoading } = useSWR<DashboardData>('/api/admin/dashboard', fetcher, {
+  const { data, isLoading, error } = useSWR<DashboardData>('/api/admin/dashboard', fetcher, {
     dedupingInterval: 120000,
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
   })
+
+  if (error?.message === 'Unauthorized' || error?.message.startsWith('请求失败')) {
+    if (typeof window !== 'undefined') {
+      window.location.href = '/admin/login'
+    }
+    return null
+  }
 
   if (isLoading || !data) {
     return (

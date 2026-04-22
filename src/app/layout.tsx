@@ -4,7 +4,6 @@ import './globals.css'
 import Navbar from '@/components/layout/Navbar'
 import FloatingActions from '@/components/ui/FloatingActions'
 import Footer from '@/components/layout/Footer'
-import { cookies } from 'next/headers'
 
 const zenMaruGothic = localFont({
   src: [
@@ -72,23 +71,27 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function RootLayout({
+const darkModeScript = `
+(function(){try{var d=document.cookie.match(/(?:^|; )darkMode=true/);if(d)document.documentElement.classList.add('dark')}catch(e){}})()
+`
+
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const cookieStore = await cookies()
-  const darkMode = cookieStore.get('darkMode')?.value === 'true'
   const className = [
     zenMaruGothic.variable,
     notoSansSC.variable,
     courierPrime.variable,
     jetbrainsMono.variable,
-    darkMode ? 'dark' : '',
   ].join(' ')
 
   return (
     <html lang="zh-CN" className={className} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: darkModeScript }} />
+      </head>
       <body className="bg-bg text-text min-h-screen flex flex-col font-[family-name:var(--font-body)]">
         <Navbar />
         <main className="flex-1">{children}</main>

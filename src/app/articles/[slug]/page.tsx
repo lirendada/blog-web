@@ -122,6 +122,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     },
   })
 
+  const hasToc = /<h[23][^>]*>[^<]*<\/h[23]>/i.test(html)
+
   return (
     <>
       <script
@@ -131,15 +133,16 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       <ReadingProgress />
       <ViewTracker slug={article.slug} />
 
-      {/* Floating TOC — fixed to the left of centered content, xl+ only */}
-      <aside
-        className="hidden xl:block fixed top-[100px] w-[200px]"
-        style={{ left: 'calc(50% - 572px)' }}
-      >
-        <TableOfContents html={html} />
-      </aside>
+      <div className={hasToc ? 'xl:flex xl:items-start xl:justify-center xl:gap-4' : ''}>
+        {hasToc && (
+        <aside
+          className="hidden xl:block w-[220px] shrink-0 sticky top-6 self-start pt-8 pl-12"
+        >
+          <TableOfContents html={html} />
+        </aside>
+        )}
 
-      <div className="max-w-[680px] mx-auto px-6 pt-8 pb-16">
+        <div className="max-w-[740px] w-full mx-auto px-6 pt-8 pb-16">
         {/* Back link */}
         <Link
           href="/articles"
@@ -242,6 +245,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
         {/* Comments */}
         <Comments slug={article.slug} />
+      </div>
       </div>
     </>
   )

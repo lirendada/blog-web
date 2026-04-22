@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { prisma } from '@/lib/prisma'
 import { formatDateHeader, getDateKey } from '@/lib/utils'
 import Pagination from '@/components/ui/Pagination'
-import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: '资讯',
@@ -12,6 +11,16 @@ export const metadata: Metadata = {
 export const revalidate = 900
 
 const PAGE_SIZE = 20
+
+function formatTimeLabel(date: Date | null) {
+  if (!date) return null
+
+  return new Intl.DateTimeFormat('zh-CN', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(date)
+}
 
 interface PageProps {
   searchParams: Promise<{ page?: string; source?: string }>
@@ -24,7 +33,7 @@ export default async function NewsPage({ searchParams }: PageProps) {
 
   const where = { ...(sourceId ? { sourceId } : {}) }
 
-  const [items, total, sources] = await Promise.all([
+  const [items, total] = await Promise.all([
     prisma.newsItem.findMany({
       where,
       orderBy: { publishedAt: 'desc' },
@@ -32,10 +41,6 @@ export default async function NewsPage({ searchParams }: PageProps) {
       take: PAGE_SIZE,
     }),
     prisma.newsItem.count({ where }),
-    prisma.newsSource.findMany({
-      select: { id: true, name: true },
-      orderBy: { name: 'asc' },
-    }),
   ])
 
   // Group items by date
@@ -54,54 +59,17 @@ export default async function NewsPage({ searchParams }: PageProps) {
         资讯
       </h1>
 
-      {/* 来源筛选 */}
-      {sources.length > 0 && (
-        <div className="flex flex-wrap gap-2 pb-6">
-          <a
-            href="/news"
-            className={`
-              inline-block rounded-[var(--radius-sm)] px-3 py-1
-              font-mono text-xs transition-colors
-              ${!sourceId
-                ? 'bg-accent-light text-accent dark:bg-dark-accent-light dark:text-dark-accent'
-                : 'bg-bg-secondary text-text-secondary dark:bg-dark-bg-secondary dark:text-dark-text-secondary hover:text-accent dark:hover:text-dark-accent'
-              }
-            `}
-          >
-            全部
-          </a>
-          {sources.map((source) => (
-            <a
-              key={source.id}
-              href={`/news?source=${source.id}`}
-              className={`
-                inline-block rounded-[var(--radius-sm)] px-3 py-1
-                font-mono text-xs transition-colors
-                ${sourceId === source.id
-                  ? 'bg-accent-light text-accent dark:bg-dark-accent-light dark:text-dark-accent'
-                  : 'bg-bg-secondary text-text-secondary dark:bg-dark-bg-secondary dark:text-dark-text-secondary hover:text-accent dark:hover:text-dark-accent'
-                }
-              `}
-            >
-              {source.name}
-            </a>
-          ))}
-        </div>
-      )}
-
-      <div className="border-b border-dashed border-border-light dark:border-dark-border-light mb-8" />
-
       {/* 按日期分组的资讯列表 */}
       {items.length > 0 ? (
-        <div className="flex flex-col gap-8 pb-8">
+        <div className="flex flex-col gap-6 pb-8">
           {Object.entries(grouped).map(([dateKey, groupItems]) => (
             <div key={dateKey}>
-              <h2 className="font-mono text-sm text-text-secondary dark:text-dark-text-secondary mb-4 pb-2 border-b border-dashed border-border-light dark:border-dark-border-light">
+              <h2 className="font-mono text-[13px] text-text-secondary dark:text-dark-text-secondary mb-3 pb-1.5 border-b border-dashed border-border-light dark:border-dark-border-light">
                 {groupItems[0].publishedAt
                   ? formatDateHeader(groupItems[0].publishedAt)
                   : '未知日期'}
               </h2>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
                 {groupItems.map((item) => (
                   <a
                     key={item.id}
@@ -109,45 +77,49 @@ export default async function NewsPage({ searchParams }: PageProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="
-                      group block p-4
+                      group block px-3 py-3
                       border border-dashed border-border-light dark:border-dark-border-light
                       rounded-[var(--radius-md)]
-                      hover:border-accent dark:hover:border-dark-accent
-                      transition-all duration-200 ease-out
-                      hover:-translate-y-0.5 hover:shadow-md
+                      bg-bg-card/55 dark:bg-dark-bg-card/35
+                      hover:border-accent/55 dark:hover:border-dark-accent/55
+                      hover:bg-bg-card dark:hover:bg-dark-bg-card/55
+                      transition-colors duration-200 ease-out
                     "
                   >
                     <h3
                       className="
-                        font-heading text-lg
+                        font-heading text-base sm:text-[17px] leading-snug
                         text-text dark:text-dark-text
                         group-hover:text-accent dark:group-hover:text-dark-accent
                         transition-colors
                         line-clamp-2
-                        mb-2
+                        mb-1.5
                       "
                     >
                       {item.title}
                     </h3>
                     {item.description && (
-                      <p className="font-mono text-sm text-text-secondary dark:text-dark-text-secondary line-clamp-2 leading-relaxed mb-2">
+                      <p className="font-mono text-[13px] text-text-secondary dark:text-dark-text-secondary line-clamp-2 leading-6 mb-2">
                         {item.description}
                       </p>
                     )}
                     <div
                       className="
-                        font-mono text-xs
+                        font-mono text-[11px] sm:text-xs
                         text-text-secondary dark:text-dark-text-secondary
                         flex items-center gap-3
                       "
                     >
                       {item.sourceName && (
-                        <span className="inline-block bg-accent-light dark:bg-dark-accent-light text-accent dark:text-dark-accent px-2 py-0.5 rounded-[var(--radius-full)]">
+                        <span className="inline-flex items-center rounded-[var(--radius-sm)] bg-accent-light dark:bg-dark-accent-light text-accent dark:text-dark-accent px-1.5 py-0.5">
                           {item.sourceName}
                         </span>
                       )}
-                      <span className="ml-auto text-accent dark:text-dark-accent opacity-0 group-hover:opacity-100 transition-opacity">
-                        阅读原文 →
+                      {item.publishedAt && (
+                        <span>{formatTimeLabel(item.publishedAt)}</span>
+                      )}
+                      <span className="ml-auto text-accent dark:text-dark-accent opacity-70 group-hover:opacity-100 transition-opacity">
+                        <span className="hidden sm:inline">原文</span> ↗
                       </span>
                     </div>
                   </a>

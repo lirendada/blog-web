@@ -76,7 +76,7 @@ export default function TableOfContents({ html }: TableOfContentsProps) {
   if (headings.length === 0) return null
 
   return (
-    <nav>
+    <nav className="max-h-[calc(100vh-5rem)] overflow-y-auto">
       <h4
         className="
           font-mono text-xs uppercase tracking-wider

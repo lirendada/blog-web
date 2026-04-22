@@ -1,14 +1,12 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
-import { formatDate } from '@/lib/utils'
 import Typewriter from '@/components/ui/Typewriter'
 import TagCloud from '@/components/ui/TagCloud'
-import StickerCard from '@/components/ui/StickerCard'
+import HotArticlesCarousel from '@/components/ui/HotArticlesCarousel'
 
 export const metadata: Metadata = {
-  title: 'my_blog - 个人博客',
-  description: '用爱发电的个人博客，记录技术与生活。',
+  title: 'lirendada的小屋',
+  description: 'lirendada 的小屋，记录技术与生活。',
   alternates: { canonical: '/' },
 }
 
@@ -20,13 +18,13 @@ function JsonLd() {
     '@graph': [
       {
         '@type': 'WebSite',
-        name: 'my_blog',
+        name: 'lirendada的小屋',
         url: siteUrl,
-        description: '用爱发电的个人博客，记录技术与生活。',
+        description: 'lirendada 的小屋，记录技术与生活。',
       },
       {
         '@type': 'Organization',
-        name: 'my_blog',
+        name: 'lirendada的小屋',
         url: siteUrl,
       },
     ],
@@ -60,8 +58,7 @@ async function getHotArticles() {
       id: true,
       title: true,
       slug: true,
-      viewCount: true,
-      publishedAt: true,
+      excerpt: true,
       tags: {
         include: {
           tag: { select: { name: true, slug: true } },
@@ -97,7 +94,7 @@ export default async function HomePage() {
               mb-6
             "
           >
-            my_blog
+            lirendada的小屋
           </h1>
           <div
             className="
@@ -134,40 +131,11 @@ export default async function HomePage() {
         )}
 
         {/* 热门文章 */}
-        <section className="pb-12">
-          <h2
-            className="
-              font-heading text-2xl
-              text-text dark:text-dark-text
-              mb-6
-            "
-          >
-            热门文章
-          </h2>
-          {hotArticles.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {hotArticles.map((article, i) => (
-                <StickerCard
-                  key={article.id}
-                  href={`/articles/${article.slug}`}
-                  index={i}
-                  title={article.title}
-                  viewCount={article.viewCount}
-                  date={article.publishedAt ? formatDate(article.publishedAt) : null}
-                  tags={article.tags}
-                />
-              ))}
-            </div>
-          ) : (
-            <p
-              className="
-                font-mono text-sm
-                text-text-secondary dark:text-dark-text-secondary
-              "
-            >
-              暂无文章
-            </p>
-          )}
+        <section className="pb-12 pt-6 overflow-visible">
+          <HotArticlesCarousel
+            title="热门文章"
+            articles={hotArticles}
+          />
         </section>
     </div>
     </>

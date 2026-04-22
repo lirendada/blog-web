@@ -9,10 +9,10 @@ interface StickerTag {
 
 interface StickerCardProps {
   href: string
-  index: number
   title: string
-  viewCount: number
-  date?: string | null
+  tilt?: number
+  hoverTilt?: number
+  excerpt?: string | null
   tags?: StickerTag[]
 }
 
@@ -36,9 +36,9 @@ function tagColor(name: string): string {
   return palette[Math.abs(hash) % palette.length]
 }
 
-export default function StickerCard({ href, index, title, viewCount, date, tags }: StickerCardProps) {
-  const tilt = TILT_TABLE[index % TILT_TABLE.length]
-  const hoverTilt = HOVER_TILT_TABLE[index % HOVER_TILT_TABLE.length]
+export default function StickerCard({ href, title, tilt: tiltProp, hoverTilt: hoverTiltProp, excerpt, tags }: StickerCardProps) {
+  const tilt = tiltProp ?? 0
+  const hoverTilt = hoverTiltProp ?? 0
 
   return (
     <Link href={href} className="group block">
@@ -98,16 +98,17 @@ export default function StickerCard({ href, index, title, viewCount, date, tags 
           {title}
         </h3>
 
-        <div
-          className="
-            font-mono text-xs
-            text-text-secondary dark:text-dark-text-secondary
-            flex items-center justify-center gap-2
-          "
-        >
-          <span>{viewCount} 次阅读</span>
-          {date && <span>{date}</span>}
-        </div>
+        {excerpt && (
+          <p
+            className="
+              font-mono text-xs
+              text-text-secondary dark:text-dark-text-secondary
+              line-clamp-2 mt-1
+            "
+          >
+            {excerpt}
+          </p>
+        )}
 
         {tags && tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 justify-center mt-3">

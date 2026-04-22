@@ -7,7 +7,6 @@ import SearchDialog from '@/components/ui/SearchDialog'
 
 const navLinks = [
   { href: '/articles', label: '博客' },
-  { href: '/archives', label: '归档' },
   { href: '/news', label: '资讯' },
   { href: '/about', label: '关于' },
 ]
@@ -27,6 +26,20 @@ export default function Navbar() {
     return () => window.removeEventListener('keydown', handleKey)
   }, [])
 
+  useEffect(() => {
+    let original = document.title
+    const handler = () => {
+      if (document.hidden) {
+        original = document.title
+        document.title = 'oi，干嘛去了～'
+      } else {
+        document.title = original
+      }
+    }
+    document.addEventListener('visibilitychange', handler)
+    return () => document.removeEventListener('visibilitychange', handler)
+  }, [])
+
   return (
     <>
       <nav
@@ -40,12 +53,15 @@ export default function Navbar() {
         <Link
           href="/"
           className="
+            flex items-center gap-2
             font-mono text-base text-navy dark:text-dark-text
             hover:text-accent dark:hover:text-dark-accent
             transition-colors
           "
         >
-          &#x25C7; my_blog
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="" width="24" height="24" className="rounded-sm" />
+          <span className="translate-y-[1px]">lirendada的小屋</span>
         </Link>
 
         {/* Navigation links */}

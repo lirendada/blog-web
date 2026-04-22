@@ -130,7 +130,6 @@ export async function POST(request: Request) {
 
     revalidatePath('/')
     revalidatePath('/articles')
-    revalidatePath('/archives')
     revalidatePath('/tags')
     revalidatePath('/sitemap.xml')
 

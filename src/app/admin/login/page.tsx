@@ -44,7 +44,7 @@ export default function AdminLoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-bg px-4">
       <div className="w-full max-w-[400px] bg-bg-card rounded-[var(--radius-lg)] p-8 bg-lined shadow-md">
         <h1 className="font-[family-name:var(--font-mono)] text-2xl text-text text-center mb-2">
-          my_blog 管理手帐
+          lirendada的小屋 管理手帐
         </h1>
         <div className="border-b border-dashed border-border-light mb-8" />
 

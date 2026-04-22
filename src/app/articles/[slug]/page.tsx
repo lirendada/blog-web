@@ -97,7 +97,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     headline: article.title,
     description: article.excerpt || undefined,
     datePublished: article.publishedAt?.toISOString(),
-    author: { '@type': 'Person', name: 'my_blog' },
+    author: { '@type': 'Person', name: 'lirendada' },
     url: `${siteUrl}/articles/${article.slug}`,
     ...(article.coverImage && { image: article.coverImage }),
     keywords: article.tags.map((t) => t.tag.name).join(', '),
@@ -130,6 +130,14 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       />
       <ReadingProgress />
       <ViewTracker slug={article.slug} />
+
+      {/* Floating TOC — fixed to the left of centered content, xl+ only */}
+      <aside
+        className="hidden xl:block fixed top-[100px] w-[200px]"
+        style={{ left: 'calc(50% - 572px)' }}
+      >
+        <TableOfContents html={html} />
+      </aside>
 
       <div className="max-w-[680px] mx-auto px-6 pt-8 pb-16">
         {/* Back link */}
@@ -167,8 +175,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             mb-4
           "
         >
-          {article.publishedAt && <span>{formatDate(article.publishedAt)}</span>}
-          <span>&middot;</span>
           <span>约{readingTime}</span>
           {article.category && (
             <>
@@ -194,13 +200,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           className="border-b border-dashed border-border-light dark:border-dark-border-light mb-8"
         />
 
-        {/* Content + Floating TOC */}
-        <div className="relative">
-          <div className="hidden xl:block absolute right-[calc(100%+32px)] top-0">
-            <TableOfContents html={html} />
-          </div>
-          <ArticleContent html={html} />
-        </div>
+        {/* Content */}
+        <ArticleContent html={html} />
 
         {/* Like button */}
         <LikeButton slug={article.slug} initialCount={article.likeCount} initialLiked={initialLiked} />

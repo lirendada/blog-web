@@ -4,7 +4,7 @@ import ArticleCard from '@/components/blog/ArticleCard'
 import Pagination from '@/components/ui/Pagination'
 
 export const metadata: Metadata = {
-  title: '博客 - my_blog',
+  title: '博客 - lirendada的小屋',
   description: '所有博客文章列表。',
 }
 

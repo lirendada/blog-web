@@ -120,7 +120,6 @@ export async function PUT(
 
     revalidatePath('/')
     revalidatePath('/articles')
-    revalidatePath('/archives')
     revalidatePath('/tags')
     revalidatePath('/sitemap.xml')
     if (existing.slug) {
@@ -161,7 +160,6 @@ export async function DELETE(
 
     revalidatePath('/')
     revalidatePath('/articles')
-    revalidatePath('/archives')
     revalidatePath('/tags')
     revalidatePath('/sitemap.xml')
     if (existing.slug) {

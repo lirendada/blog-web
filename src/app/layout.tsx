@@ -50,10 +50,10 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    template: '%s | my_blog',
-    default: 'my_blog',
+    template: '%s | lirendada的小屋',
+    default: 'lirendada的小屋',
   },
-  description: '一个日系手帐风格的个人博客，记录技术思考与生活点滴',
+  description: 'lirendada 的个人小屋，记录技术思考与生活点滴',
   alternates: {
     canonical: '/',
   },
@@ -61,14 +61,14 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'zh_CN',
     url: siteUrl,
-    siteName: 'my_blog',
-    title: 'my_blog',
-    description: '一个日系手帐风格的个人博客，记录技术思考与生活点滴',
+    siteName: 'lirendada的小屋',
+    title: 'lirendada的小屋',
+    description: 'lirendada 的个人小屋，记录技术思考与生活点滴',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'my_blog',
-    description: '一个日系手帐风格的个人博客，记录技术思考与生活点滴',
+    title: 'lirendada的小屋',
+    description: 'lirendada 的个人小屋，记录技术思考与生活点滴',
   },
 }
 

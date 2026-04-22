@@ -76,13 +76,7 @@ export default function TableOfContents({ html }: TableOfContentsProps) {
   if (headings.length === 0) return null
 
   return (
-    <nav
-      className="
-        w-[200px]
-        sticky top-[80px]
-        self-start
-      "
-    >
+    <nav>
       <h4
         className="
           font-mono text-xs uppercase tracking-wider
@@ -92,7 +86,7 @@ export default function TableOfContents({ html }: TableOfContentsProps) {
       >
         目录
       </h4>
-      <ul className="space-y-1.5">
+      <ul className="space-y-3">
         {headings.map((h) => (
           <li key={h.id}>
             <a

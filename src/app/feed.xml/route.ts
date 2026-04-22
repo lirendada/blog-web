@@ -30,7 +30,7 @@ export async function GET() {
   const rss = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
-  <title>my_blog</title>
+  <title>lirendada的小屋</title>
   <link>${siteUrl}</link>
   <description>个人博客</description>
   <language>zh-CN</language>

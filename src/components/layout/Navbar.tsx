@@ -65,14 +65,32 @@ export default function Navbar() {
         </Link>
 
         {/* Navigation links */}
-        <div className="flex items-center gap-6">
+        <div
+          className="
+            flex items-center gap-1.5
+            rounded-[var(--radius-lg)]
+            border border-dashed border-border-light/80 dark:border-dark-border-light/80
+            bg-bg-card/70 dark:bg-dark-bg-card/40
+            px-1.5 py-1
+          "
+        >
           <button
             onClick={() => setSearchOpen(true)}
             className="
+              inline-flex h-9 w-9 items-center justify-center
+              rounded-[var(--radius-sm)] border border-transparent
               text-text-secondary dark:text-dark-text-secondary
+              hover:-translate-y-px
+              hover:border-border-light dark:hover:border-dark-border-light
+              hover:bg-bg-secondary/75 dark:hover:bg-dark-bg-secondary/75
               hover:text-accent dark:hover:text-dark-accent
-              transition-colors cursor-pointer
+              focus-visible:outline-none
+              focus-visible:border-accent/40 dark:focus-visible:border-dark-accent/40
+              focus-visible:bg-accent-light/70 dark:focus-visible:bg-dark-accent-light/60
+              focus-visible:text-accent dark:focus-visible:text-dark-accent
+              transition-all duration-200 cursor-pointer
             "
+            aria-label="搜索"
             title="搜索 (⌘K)"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -88,25 +106,23 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={`
-                  relative font-body text-sm
-                  transition-colors
-                  hover:text-accent dark:hover:text-dark-accent
+                  inline-flex h-9 items-center rounded-[var(--radius-sm)]
+                  border px-3.5
+                  font-body text-sm
+                  transition-all duration-200
+                  hover:-translate-y-px
+                  focus-visible:outline-none
                   ${
                     isActive
-                      ? 'text-accent dark:text-dark-accent'
-                      : 'text-text-secondary dark:text-dark-text-secondary'
+                      ? 'border-accent/20 dark:border-dark-accent/25 bg-accent-light/90 dark:bg-dark-accent-light/85 text-accent dark:text-dark-accent shadow-sm'
+                      : 'border-transparent text-text-secondary dark:text-dark-text-secondary hover:border-border-light dark:hover:border-dark-border-light hover:bg-bg-secondary/75 dark:hover:bg-dark-bg-secondary/75 hover:text-text dark:hover:text-dark-text focus-visible:border-accent/40 dark:focus-visible:border-dark-accent/40 focus-visible:bg-accent-light/70 dark:focus-visible:bg-dark-accent-light/60 focus-visible:text-accent dark:focus-visible:text-dark-accent'
                   }
-                  after:absolute after:bottom-[-2px] after:left-0 after:w-0
-                  after:h-[1px] after:bg-accent dark:after:bg-dark-accent
-                  after:transition-all after:duration-200
-                  hover:after:w-full
                 `}
               >
                 {link.label}
               </Link>
             )
           })}
-
         </div>
       </nav>
 

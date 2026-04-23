@@ -14,10 +14,8 @@ interface StickerCardProps {
   hoverTilt?: number
   excerpt?: string | null
   tags?: StickerTag[]
+  pinned?: boolean
 }
-
-const TILT_TABLE = [-3, 2, -1, 3, -2, 1, -3, 2]
-const HOVER_TILT_TABLE = [1, -2, 2, -1, 1, -2, 1, -1]
 
 function tagColor(name: string): string {
   let hash = 0
@@ -25,18 +23,15 @@ function tagColor(name: string): string {
     hash = ((hash << 5) - hash + name.charCodeAt(i)) | 0
   }
   const palette = [
-    'bg-rose-light text-rose dark:bg-dark-rose-light dark:text-dark-rose',
     'bg-accent-light text-accent dark:bg-dark-accent-light dark:text-dark-accent',
-    'bg-[#fef3c7] text-mustard dark:bg-[#3a3520] dark:text-mustard',
-    'bg-[#e0e7f1] text-navy dark:bg-[#252d3a] dark:text-[#8faabe]',
-    'bg-[#f3e8ff] text-[#7c3aed] dark:bg-[#2d1f3d] dark:text-[#b794f4]',
-    'bg-[#ecfdf5] text-[#059669] dark:bg-[#1a2d25] dark:text-[#6ee7b7]',
-    'bg-[#fff7ed] text-[#c2410c] dark:bg-[#2d2218] dark:text-[#fdba74]',
+    'bg-rose-light text-rose dark:bg-dark-rose-light dark:text-dark-rose',
+    'bg-bg-secondary text-navy dark:bg-dark-bg-secondary dark:text-dark-text',
+    'bg-bg-secondary text-mustard dark:bg-dark-bg-secondary dark:text-dark-accent',
   ]
   return palette[Math.abs(hash) % palette.length]
 }
 
-export default function StickerCard({ href, title, tilt: tiltProp, hoverTilt: hoverTiltProp, excerpt, tags }: StickerCardProps) {
+export default function StickerCard({ href, title, tilt: tiltProp, hoverTilt: hoverTiltProp, excerpt, tags, pinned = false }: StickerCardProps) {
   const tilt = tiltProp ?? 0
   const hoverTilt = hoverTiltProp ?? 0
 
@@ -49,7 +44,7 @@ export default function StickerCard({ href, title, tilt: tiltProp, hoverTilt: ho
           border border-dashed border-border-light dark:border-dark-border-light
           rounded-[var(--radius-lg)]
           shadow-sm hover:shadow-md
-          transition-[transform,box-shadow] duration-400
+          transition-[transform,box-shadow,border-color] duration-300
           ease-[cubic-bezier(0.25,0.46,0.45,0.94)]
           text-center
         "
@@ -59,32 +54,34 @@ export default function StickerCard({ href, title, tilt: tiltProp, hoverTilt: ho
           transform: `rotate(var(--tilt))`,
         } as React.CSSProperties}
       >
-        {/* Hole punch — centered at (12px, 12px) from card corner */}
-        <div
-          className="
-            absolute top-[12px] left-[12px]
-            w-4 h-4 -translate-x-1/2 -translate-y-1/2
-            rounded-full
-            bg-bg dark:bg-dark-bg
-            shadow-[inset_0_1px_3px_rgba(0,0,0,0.2)]
-          "
-        />
+        {pinned && (
+          <>
+            <div
+              className="
+                absolute top-[12px] left-[12px]
+                w-4 h-4 -translate-x-1/2 -translate-y-1/2
+                rounded-full
+                bg-bg dark:bg-dark-bg
+                shadow-[inset_0_1px_3px_rgba(74,69,64,0.22)]
+              "
+            />
 
-        {/* Pin — needle tip lands exactly at hole center */}
-        <div
-          className="
-            sticker-pin absolute z-20
-            top-[12px] left-[12px]
-            -translate-x-1/2 -translate-y-full
-            transition-opacity duration-300
-            flex flex-col items-center
-          "
-        >
-          <div className="w-[18px] h-[18px] rounded-full bg-gradient-to-br from-[#e06060] to-[#a83838] shadow-md relative">
-            <div className="absolute top-[3px] left-[3px] w-[8px] h-[8px] rounded-full bg-white/30" />
-          </div>
-          <div className="w-[2px] h-[12px] bg-[#b04848]" />
-        </div>
+            <div
+              className="
+                sticker-pin absolute z-20
+                top-[12px] left-[12px]
+                -translate-x-1/2 -translate-y-full
+                transition-opacity duration-300
+                flex flex-col items-center
+              "
+            >
+              <div className="relative h-[18px] w-[18px] rounded-full bg-stamp shadow-md dark:bg-dark-stamp">
+                <div className="absolute left-[3px] top-[3px] h-[8px] w-[8px] rounded-full bg-white/30" />
+              </div>
+              <div className="h-[12px] w-[2px] bg-stamp/80 dark:bg-dark-stamp/80" />
+            </div>
+          </>
+        )}
 
         <h3
           className="
@@ -132,9 +129,20 @@ export default function StickerCard({ href, title, tilt: tiltProp, hoverTilt: ho
       <style>{`
         .sticker-card:hover {
           transform: rotate(var(--tilt-hover)) scale(1.04) translateY(-4px) !important;
+          border-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
         }
         .sticker-card:hover .sticker-pin {
           opacity: 0;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .sticker-card,
+          .sticker-pin {
+            transition: none;
+          }
+          .sticker-card,
+          .sticker-card:hover {
+            transform: none !important;
+          }
         }
       `}</style>
     </Link>

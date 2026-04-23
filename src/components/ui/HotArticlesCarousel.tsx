@@ -127,6 +127,7 @@ export default function HotArticlesCarousel({ title, articles: initial }: HotArt
             hoverTilt={tilts[i]?.hoverTilt}
             excerpt={article.excerpt}
             tags={article.tags}
+            pinned={i === 0 || i === 3}
           />
         ))}
       </div>

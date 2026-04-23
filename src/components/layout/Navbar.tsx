@@ -108,7 +108,9 @@ export default function Navbar() {
     <>
       <nav
         className="
-          h-14 flex items-center justify-between px-6
+          site-nav
+          min-h-14 flex flex-wrap items-center justify-between px-4 py-2
+          sm:h-14 sm:flex-nowrap sm:px-6 sm:py-0
           bg-bg dark:bg-dark-bg
           border-b border-dashed border-border-light dark:border-dark-border-light
         "
@@ -117,20 +119,22 @@ export default function Navbar() {
         <Link
           href="/"
           className="
-            flex items-center gap-2
+            flex shrink-0 items-center gap-2
             font-mono text-base text-navy dark:text-dark-text
             transition-colors
           "
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="" width="24" height="24" className="rounded-sm" />
-          <span className="translate-y-[1px]">lirendada的小屋</span>
+          <span className="hidden sm:inline translate-y-[1px]">lirendada的小屋</span>
         </Link>
 
         {/* Navigation links */}
         <div
           className="
-            flex items-center gap-1.5
+            site-nav-actions
+            order-3 mt-1 flex w-full shrink-0 items-center justify-center gap-0.5
+            sm:order-none sm:mt-0 sm:w-auto sm:justify-end sm:gap-1.5
             rounded-[var(--radius-lg)]
             px-1.5 py-1
           "
@@ -138,7 +142,7 @@ export default function Navbar() {
           <button
             onClick={() => setSearchOpen(true)}
             className="
-              inline-flex h-9 w-9 items-center justify-center
+              inline-flex h-9 w-8 sm:w-9 items-center justify-center
               rounded-[var(--radius-sm)] border border-transparent
               text-text-secondary dark:text-dark-text-secondary
               hover:-translate-y-[2px]
@@ -167,9 +171,10 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
+                aria-label={link.label}
                 className={`
-                  group relative inline-flex h-9 items-center gap-2 rounded-[var(--radius-sm)]
-                  border px-3.5
+                  group relative inline-flex h-9 w-8 items-center justify-center gap-2 rounded-[var(--radius-sm)]
+                  border px-0 sm:w-auto sm:px-3.5
                   font-body text-sm
                   transition-all duration-200
                   hover:-translate-y-[2px]
@@ -187,7 +192,7 @@ export default function Navbar() {
                     ${isActive ? 'opacity-100' : 'opacity-75 group-hover:opacity-100 group-hover:text-accent dark:group-hover:text-dark-accent'}
                   `}
                 />
-                {link.label}
+                <span className="hidden sm:inline whitespace-nowrap">{link.label}</span>
               </Link>
             )
           })}

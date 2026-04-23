@@ -23,13 +23,22 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { name, feedUrl, siteUrl, type } = await request.json()
-    if (!name || !feedUrl) {
+    const { name, feedUrl, siteUrl } = await request.json()
+    const trimmedName = typeof name === 'string' ? name.trim() : ''
+    const trimmedFeedUrl = typeof feedUrl === 'string' ? feedUrl.trim() : ''
+    const trimmedSiteUrl = typeof siteUrl === 'string' ? siteUrl.trim() : ''
+
+    if (!trimmedName || !trimmedFeedUrl) {
       return NextResponse.json({ error: 'Name and feed URL are required' }, { status: 400 })
     }
 
     const source = await prisma.newsSource.create({
-      data: { name, feedUrl, siteUrl: siteUrl || null, type: type || 'rss' },
+      data: {
+        name: trimmedName,
+        feedUrl: trimmedFeedUrl,
+        siteUrl: trimmedSiteUrl || null,
+        type: 'rss',
+      },
     })
 
     return NextResponse.json({ source }, { status: 201 })

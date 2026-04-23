@@ -23,6 +23,7 @@ export async function GET(request: Request) {
         description: true,
         sourceName: true,
         sourceId: true,
+        source: { select: { name: true } },
         publishedAt: true,
       },
     }),
@@ -35,7 +36,10 @@ export async function GET(request: Request) {
   })
 
   return NextResponse.json({
-    items,
+    items: items.map(({ source, ...item }) => ({
+      ...item,
+      sourceName: source?.name || item.sourceName,
+    })),
     sources,
     pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) },
   })

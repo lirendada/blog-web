@@ -136,6 +136,24 @@ export default async function HomePage() {
             title="热门文章"
             articles={hotArticles}
           />
+          <div className="text-center mt-8">
+            <a
+              href="/articles"
+              className="
+                inline-flex items-center gap-1.5
+                font-mono text-sm
+                text-text-secondary dark:text-dark-text-secondary
+                hover:text-accent dark:hover:text-dark-accent
+                transition-colors duration-200
+              "
+            >
+              查看全部文章
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </a>
+          </div>
         </section>
     </div>
     </>

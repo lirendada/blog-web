@@ -5,6 +5,15 @@ const parser = new Parser({ timeout: 10000 })
 
 const MAX_AGE_DAYS = 7
 
+export type FeedFetchResult = {
+  source: string
+  inserted: number
+  updated: number
+  filtered: number
+  failed: number
+  errorMessage: string | null
+}
+
 const AI_KEYWORDS = [
   // English
   'ai', 'artificial intelligence', 'gpt', 'llm', 'chatgpt', 'claude', 'gemini', 'deepseek',
@@ -21,16 +30,37 @@ function isAIRelated(title: string, description?: string | null): boolean {
   return AI_KEYWORDS.some(kw => text.includes(kw))
 }
 
-export async function fetchFeed(sourceId: string) {
+function parseFeedDate(value?: string | null) {
+  if (!value) return null
+
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? null : date
+}
+
+function createEmptyResult(source: string): FeedFetchResult {
+  return {
+    source,
+    inserted: 0,
+    updated: 0,
+    filtered: 0,
+    failed: 0,
+    errorMessage: null,
+  }
+}
+
+export async function fetchFeed(sourceId: string): Promise<FeedFetchResult> {
   const source = await prisma.newsSource.findUnique({ where: { id: sourceId } })
   if (!source || !source.active) {
-    return { source: source?.name || 'Unknown', fetched: 0, skipped: 0, error: 'Source not found or inactive' }
+    return {
+      ...createEmptyResult(source?.name || 'Unknown'),
+      errorMessage: 'Source not found or inactive',
+    }
   }
+
+  const result = createEmptyResult(source.name)
 
   try {
     const feed = await parser.parseURL(source.feedUrl)
-    let fetched = 0
-    let skipped = 0
 
     for (const item of feed.items.slice(0, 30)) {
       const url = item.link || item.guid
@@ -43,56 +73,89 @@ export async function fetchFeed(sourceId: string) {
 
       // Only keep AI-related items
       if (!isAIRelated(title, description)) {
-        skipped++
+        result.filtered++
         continue
       }
 
-      await prisma.newsItem.upsert({
-        where: { url },
-        update: {
-          title,
-          description,
-          publishedAt: item.pubDate ? new Date(item.pubDate) : null,
-          fetchedAt: new Date(),
-        },
-        create: {
-          title,
-          url,
-          description,
-          sourceId: source.id,
-          sourceName: source.name,
-          publishedAt: item.pubDate ? new Date(item.pubDate) : null,
-        },
-      }).then(() => { fetched++ }).catch(() => {})
+      try {
+        const existing = await prisma.newsItem.findUnique({
+          where: { url },
+          select: { id: true },
+        })
+        const publishedAt = parseFeedDate(item.pubDate)
+
+        if (existing) {
+          await prisma.newsItem.update({
+            where: { id: existing.id },
+            data: {
+              title,
+              description,
+              publishedAt,
+              fetchedAt: new Date(),
+              sourceName: source.name,
+            },
+          })
+          result.updated++
+        } else {
+          await prisma.newsItem.create({
+            data: {
+              title,
+              url,
+              description,
+              sourceId: source.id,
+              sourceName: source.name,
+              publishedAt,
+            },
+          })
+          result.inserted++
+        }
+      } catch (error) {
+        result.failed++
+        console.error(`[rss] 单条资讯写入失败: ${source.name} ${url}`, error)
+      }
     }
-
-    await prisma.newsSource.update({
-      where: { id: sourceId },
-      data: { lastFetched: new Date() },
-    })
-
-    return { source: source.name, fetched, skipped, error: null }
   } catch (error) {
-    return { source: source.name, fetched: 0, skipped: 0, error: String(error) }
+    result.errorMessage = String(error)
+  } finally {
+    try {
+      await prisma.newsSource.update({
+        where: { id: sourceId },
+        data: { lastFetched: new Date() },
+      })
+    } catch (error) {
+      console.error(`[rss] 更新 lastFetched 失败: ${source.name}`, error)
+    }
   }
+
+  return result
 }
 
-export async function fetchAllActiveSources() {
+export async function fetchAllActiveSources(): Promise<FeedFetchResult[]> {
   const sources = await prisma.newsSource.findMany({ where: { active: true, type: 'rss' } })
-  const results = []
 
-  for (const source of sources) {
-    const result = await fetchFeed(source.id)
-    results.push(result)
-  }
+  const settledResults = await Promise.allSettled(
+    sources.map(source => fetchFeed(source.id))
+  )
 
-  return results
+  return settledResults.map((result, index) => {
+    if (result.status === 'fulfilled') return result.value
+
+    return {
+      ...createEmptyResult(sources[index]?.name || 'Unknown'),
+      errorMessage: String(result.reason),
+    }
+  })
 }
 
 export async function cleanOldNews() {
   const cutoff = new Date(Date.now() - MAX_AGE_DAYS * 24 * 60 * 60 * 1000)
   const result = await prisma.newsItem.deleteMany({
-    where: { createdAt: { lt: cutoff } },
+    where: {
+      OR: [
+        { publishedAt: { lt: cutoff } },
+        { publishedAt: null, fetchedAt: { lt: cutoff } },
+      ],
+    },
   })
   return result.count
 }

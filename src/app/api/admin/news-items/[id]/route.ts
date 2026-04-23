@@ -1,5 +1,6 @@
 import { auth } from '@/../auth'
 import { prisma } from '@/lib/prisma'
+import { revalidatePath } from 'next/cache'
 import { NextResponse } from 'next/server'
 
 export async function DELETE(
@@ -14,6 +15,7 @@ export async function DELETE(
   const { id } = await params
   try {
     await prisma.newsItem.delete({ where: { id } })
+    revalidatePath('/news')
     return NextResponse.json({ success: true })
   } catch {
     return NextResponse.json({ error: 'Failed to delete' }, { status: 500 })

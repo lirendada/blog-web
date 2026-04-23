@@ -39,6 +39,9 @@ export default async function NewsPage({ searchParams }: PageProps) {
       orderBy: { publishedAt: 'desc' },
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
+      include: {
+        source: { select: { name: true } },
+      },
     }),
     prisma.newsItem.count({ where }),
   ])
@@ -110,9 +113,9 @@ export default async function NewsPage({ searchParams }: PageProps) {
                         flex items-center gap-3
                       "
                     >
-                      {item.sourceName && (
+                      {(item.source?.name || item.sourceName) && (
                         <span className="inline-flex items-center rounded-[var(--radius-sm)] bg-accent-light dark:bg-dark-accent-light text-accent dark:text-dark-accent px-1.5 py-0.5">
-                          {item.sourceName}
+                          {item.source?.name || item.sourceName}
                         </span>
                       )}
                       {item.publishedAt && (

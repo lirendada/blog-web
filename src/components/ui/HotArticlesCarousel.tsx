@@ -71,7 +71,7 @@ export default function HotArticlesCarousel({ title, articles: initial }: HotArt
     return (
       <>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="font-heading text-2xl text-text dark:text-dark-text">{title}</h2>
+          <h2 className="home-carousel-title">{title}</h2>
         </div>
         <p className="font-mono text-sm text-text-secondary dark:text-dark-text-secondary">
           暂无文章
@@ -83,7 +83,7 @@ export default function HotArticlesCarousel({ title, articles: initial }: HotArt
   return (
     <>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="font-heading text-2xl text-text dark:text-dark-text">{title}</h2>
+        <h2 className="home-carousel-title">{title}</h2>
         <button
           onClick={refresh}
           className="

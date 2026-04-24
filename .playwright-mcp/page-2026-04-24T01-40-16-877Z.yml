@@ -1,0 +1,58 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - link "lirendada的小屋" [ref=e3] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e4]: lirendada的小屋
+    - generic [ref=e5]:
+      - button "搜索" [ref=e6] [cursor=pointer]:
+        - img [ref=e7]
+      - link "博客" [ref=e9] [cursor=pointer]:
+        - /url: /articles
+        - img [ref=e10]
+        - generic [ref=e12]: 博客
+      - link "资讯" [ref=e13] [cursor=pointer]:
+        - /url: /news
+        - img [ref=e14]
+        - generic [ref=e17]: 资讯
+      - link "关于" [ref=e18] [cursor=pointer]:
+        - /url: /about
+        - img [ref=e19]
+        - generic [ref=e21]: 关于
+  - main [ref=e22]:
+    - generic [ref=e23]:
+      - complementary [ref=e24]:
+        - heading "管理手帐" [level=2] [ref=e25]
+        - navigation [ref=e26]:
+          - link "○ 总览" [ref=e27] [cursor=pointer]:
+            - /url: /admin
+          - link "○ 文章" [ref=e29] [cursor=pointer]:
+            - /url: /admin/articles
+          - link "○ 关于页面" [ref=e31] [cursor=pointer]:
+            - /url: /admin/about
+          - link "○ 资讯管理" [ref=e33] [cursor=pointer]:
+            - /url: /admin/news
+          - link "○ 评论管理" [ref=e35] [cursor=pointer]:
+            - /url: /admin/comments
+            - generic [ref=e36]: ○ 评论管理
+          - link "○ 统计" [ref=e38] [cursor=pointer]:
+            - /url: /admin/stats
+          - link "○ 设置" [ref=e40] [cursor=pointer]:
+            - /url: /admin/settings
+          - link "← 返回首页" [ref=e42] [cursor=pointer]:
+            - /url: /
+        - button "退出登录" [ref=e44] [cursor=pointer]
+      - paragraph [ref=e47]: Loading...
+  - contentinfo [ref=e48]:
+    - navigation [ref=e49]:
+      - link "博客" [ref=e50] [cursor=pointer]:
+        - /url: /articles
+      - generic [ref=e51]: ·
+      - link "RSS" [ref=e52] [cursor=pointer]:
+        - /url: /feed.xml
+      - generic [ref=e53]: ·
+      - link "GitHub" [ref=e54] [cursor=pointer]:
+        - /url: https://github.com/lirendada
+    - paragraph [ref=e55]: 用爱发电 © 2026
+  - button "切换到暗色模式" [ref=e57] [cursor=pointer]:
+    - img [ref=e58]
+  - alert [ref=e60]

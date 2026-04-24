@@ -1,0 +1,264 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - link "lirendada的小屋" [ref=e3] [cursor=pointer]:
+      - /url: /
+      - generic [ref=e4]: lirendada的小屋
+    - generic [ref=e5]:
+      - button "搜索" [ref=e6] [cursor=pointer]:
+        - img [ref=e7]
+      - link "博客" [ref=e9] [cursor=pointer]:
+        - /url: /articles
+        - img [ref=e10]
+        - generic [ref=e12]: 博客
+      - link "资讯" [ref=e13] [cursor=pointer]:
+        - /url: /news
+        - img [ref=e14]
+        - generic [ref=e17]: 资讯
+      - link "关于" [ref=e18] [cursor=pointer]:
+        - /url: /about
+        - img [ref=e19]
+        - generic [ref=e21]: 关于
+  - main [ref=e22]:
+    - generic [ref=e23]:
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - paragraph [ref=e26]: Tomoe River Note / Personal Desk
+          - heading "lirendada 的小屋" [level=1] [ref=e27]:
+            - generic [ref=e28]: lirendada
+            - generic [ref=e29]: 的小屋
+          - generic [ref=e31]: "|"
+          - paragraph [ref=e32]: 这是我的数字客厅，门没锁。架子上堆着些博客，角落挂着心理学和哲学的碎片，还有块只贴值得看的 AI 资讯黑板。没有算法催你往下刷，想坐多久坐多久，自由逛，自由走。
+          - generic [ref=e33]:
+            - link "随手翻一篇" [ref=e34] [cursor=pointer]:
+              - /url: /articles/post-mo8drrlm-gkjt
+            - link "全部文章" [ref=e35] [cursor=pointer]:
+              - /url: /articles
+        - complementary [ref=e36]:
+          - paragraph [ref=e38]: latest note
+          - 'link "高并发内存池整体框架设计 现代很多的开发环境都是多核多线程，在申请内存的场景下，必然存在激烈的锁竞争问题。malloc 本身其实已经很优秀，但是我们项目的原型 tcmalloc 在多线程高并发的场景下更胜一筹，所以这次我们实现的内存池需要考虑以下几方面的问题： 1. 性能问题。 2. 多线程环境下，锁竞争问题。 3. 内存碎片问题。 所以 concurrent memory pool ... 2024.01.01 3 分钟 #高并发内存池" [ref=e39] [cursor=pointer]':
+            - /url: /articles/post-mo8drs2s-sc6b
+            - heading "高并发内存池整体框架设计" [level=2] [ref=e40]
+            - paragraph [ref=e41]: 现代很多的开发环境都是多核多线程，在申请内存的场景下，必然存在激烈的锁竞争问题。malloc 本身其实已经很优秀，但是我们项目的原型 tcmalloc 在多线程高并发的场景下更胜一筹，所以这次我们实现的内存池需要考虑以下几方面的问题： 1. 性能问题。 2. 多线程环境下，锁竞争问题。 3. 内存碎片问题。 所以 concurrent memory pool ...
+            - generic [ref=e42]:
+              - generic [ref=e43]: 2024.01.01
+              - generic [ref=e44]: 3 分钟
+              - generic [ref=e45]: "#高并发内存池"
+      - generic [ref=e47]:
+        - link "递归、搜索和回溯算法 41" [ref=e48] [cursor=pointer]:
+          - /url: /tags/递归-搜索和回溯算法
+          - generic [ref=e49]: 递归、搜索和回溯算法
+          - generic [ref=e50]: "41"
+        - link "二叉树 35" [ref=e51] [cursor=pointer]:
+          - /url: /tags/二叉树
+          - generic [ref=e52]: 二叉树
+          - generic [ref=e53]: "35"
+        - link "C++ 27" [ref=e54] [cursor=pointer]:
+          - /url: /tags/c
+          - generic [ref=e55]: C++
+          - generic [ref=e56]: "27"
+        - link "数组与哈希 25" [ref=e57] [cursor=pointer]:
+          - /url: /tags/数组与哈希
+          - generic [ref=e58]: 数组与哈希
+          - generic [ref=e59]: "25"
+        - link "高并发服务器 22" [ref=e60] [cursor=pointer]:
+          - /url: /tags/高并发服务器
+          - generic [ref=e61]: 高并发服务器
+          - generic [ref=e62]: "22"
+        - link "微服务即时通讯系统 20" [ref=e63] [cursor=pointer]:
+          - /url: /tags/微服务即时通讯系统
+          - generic [ref=e64]: 微服务即时通讯系统
+          - generic [ref=e65]: "20"
+        - link "网络 20" [ref=e66] [cursor=pointer]:
+          - /url: /tags/网络
+          - generic [ref=e67]: 网络
+          - generic [ref=e68]: "20"
+        - link "BFS 17" [ref=e69] [cursor=pointer]:
+          - /url: /tags/bfs
+          - generic [ref=e70]: BFS
+          - generic [ref=e71]: "17"
+        - link "动态规划 17" [ref=e72] [cursor=pointer]:
+          - /url: /tags/动态规划
+          - generic [ref=e73]: 动态规划
+          - generic [ref=e74]: "17"
+        - link "字符串 17" [ref=e75] [cursor=pointer]:
+          - /url: /tags/字符串
+          - generic [ref=e76]: 字符串
+          - generic [ref=e77]: "17"
+        - link "回溯 16" [ref=e78] [cursor=pointer]:
+          - /url: /tags/回溯
+          - generic [ref=e79]: 回溯
+          - generic [ref=e80]: "16"
+        - link "在线对战五子棋 15" [ref=e81] [cursor=pointer]:
+          - /url: /tags/在线对战五子棋
+          - generic [ref=e82]: 在线对战五子棋
+          - generic [ref=e83]: "15"
+        - link "拓展 15" [ref=e84] [cursor=pointer]:
+          - /url: /tags/拓展
+          - generic [ref=e85]: 拓展
+          - generic [ref=e86]: "15"
+        - link "链表 13" [ref=e87] [cursor=pointer]:
+          - /url: /tags/链表
+          - generic [ref=e88]: 链表
+          - generic [ref=e89]: "13"
+        - link "C语言 12" [ref=e90] [cursor=pointer]:
+          - /url: /tags/c语言
+          - generic [ref=e91]: C语言
+          - generic [ref=e92]: "12"
+        - link "多线程 10" [ref=e93] [cursor=pointer]:
+          - /url: /tags/多线程
+          - generic [ref=e94]: 多线程
+          - generic [ref=e95]: "10"
+        - link "高并发内存池 10" [ref=e96] [cursor=pointer]:
+          - /url: /tags/高并发内存池
+          - generic [ref=e97]: 高并发内存池
+          - generic [ref=e98]: "10"
+        - link "二分算法 9" [ref=e99] [cursor=pointer]:
+          - /url: /tags/二分算法
+          - generic [ref=e100]: 二分算法
+          - generic [ref=e101]: "9"
+        - link "分治 8" [ref=e102] [cursor=pointer]:
+          - /url: /tags/分治
+          - generic [ref=e103]: 分治
+          - generic [ref=e104]: "8"
+        - link "前缀和 8" [ref=e105] [cursor=pointer]:
+          - /url: /tags/前缀和
+          - generic [ref=e106]: 前缀和
+          - generic [ref=e107]: "8"
+        - link "双指针 8" [ref=e108] [cursor=pointer]:
+          - /url: /tags/双指针
+          - generic [ref=e109]: 双指针
+          - generic [ref=e110]: "8"
+        - link "滑动窗口 8" [ref=e111] [cursor=pointer]:
+          - /url: /tags/滑动窗口
+          - generic [ref=e112]: 滑动窗口
+          - generic [ref=e113]: "8"
+        - link "进程信号 8" [ref=e114] [cursor=pointer]:
+          - /url: /tags/进程信号
+          - generic [ref=e115]: 进程信号
+          - generic [ref=e116]: "8"
+        - link "基础IO 7" [ref=e117] [cursor=pointer]:
+          - /url: /tags/基础io
+          - generic [ref=e118]: 基础IO
+          - generic [ref=e119]: "7"
+        - link "git 6" [ref=e120] [cursor=pointer]:
+          - /url: /tags/git
+          - generic [ref=e121]: git
+          - generic [ref=e122]: "6"
+        - link "位运算 6" [ref=e123] [cursor=pointer]:
+          - /url: /tags/位运算
+          - generic [ref=e124]: 位运算
+          - generic [ref=e125]: "6"
+        - link "位运算与数学 6" [ref=e126] [cursor=pointer]:
+          - /url: /tags/位运算与数学
+          - generic [ref=e127]: 位运算与数学
+          - generic [ref=e128]: "6"
+        - link "Linux进程概念 5" [ref=e129] [cursor=pointer]:
+          - /url: /tags/linux进程概念
+          - generic [ref=e130]: Linux进程概念
+          - generic [ref=e131]: "5"
+        - link "栈 5" [ref=e132] [cursor=pointer]:
+          - /url: /tags/栈
+          - generic [ref=e133]: 栈
+          - generic [ref=e134]: "5"
+        - link "栈和队列 5" [ref=e135] [cursor=pointer]:
+          - /url: /tags/栈和队列
+          - generic [ref=e136]: 栈和队列
+          - generic [ref=e137]: "5"
+        - link "模拟 5" [ref=e138] [cursor=pointer]:
+          - /url: /tags/模拟
+          - generic [ref=e139]: 模拟
+          - generic [ref=e140]: "5"
+        - link "Linux入门 4" [ref=e141] [cursor=pointer]:
+          - /url: /tags/linux入门
+          - generic [ref=e142]: Linux入门
+          - generic [ref=e143]: "4"
+        - link "Linux进程控制 4" [ref=e144] [cursor=pointer]:
+          - /url: /tags/linux进程控制
+          - generic [ref=e145]: Linux进程控制
+          - generic [ref=e146]: "4"
+        - link "优先级队列 4" [ref=e147] [cursor=pointer]:
+          - /url: /tags/优先级队列
+          - generic [ref=e148]: 优先级队列
+          - generic [ref=e149]: "4"
+        - link "进程间通信 4" [ref=e150] [cursor=pointer]:
+          - /url: /tags/进程间通信
+          - generic [ref=e151]: 进程间通信
+          - generic [ref=e152]: "4"
+        - link "队列 3" [ref=e153] [cursor=pointer]:
+          - /url: /tags/队列
+          - generic [ref=e154]: 队列
+          - generic [ref=e155]: "3"
+        - link "卡特兰数 2" [ref=e156] [cursor=pointer]:
+          - /url: /tags/卡特兰数
+          - generic [ref=e157]: 卡特兰数
+          - generic [ref=e158]: "2"
+        - link "设计 2" [ref=e159] [cursor=pointer]:
+          - /url: /tags/设计
+          - generic [ref=e160]: 设计
+          - generic [ref=e161]: "2"
+        - link "贪心算法 2" [ref=e162] [cursor=pointer]:
+          - /url: /tags/贪心算法
+          - generic [ref=e163]: 贪心算法
+          - generic [ref=e164]: "2"
+        - link "哈希表 1" [ref=e165] [cursor=pointer]:
+          - /url: /tags/哈希表
+          - generic [ref=e166]: 哈希表
+          - generic [ref=e167]: "1"
+      - generic [ref=e168]:
+        - generic [ref=e169]:
+          - heading "你可能感兴趣的" [level=2] [ref=e170]
+          - button "换一批" [ref=e171] [cursor=pointer]:
+            - img [ref=e172]
+            - generic [ref=e174]: 换一批
+        - generic [ref=e175]:
+          - link "高并发内存池整体框架设计 现代很多的开发环境都是多核多线程，在申请内存的场景下，必然存在激烈的锁竞争问题。malloc 本身其实已经很优秀，但是我们项目的原型 tcmalloc 在多线程高并发的场景下更胜一筹，所以这次我们实现的内存池需要考虑以下几方面的问题： 1. 性能问题。 2. 多线程环境下，锁竞争问题。 3. 内存碎片问题。 所以 concurrent memory pool ... 高并发内存池" [ref=e176] [cursor=pointer]:
+            - /url: /articles/post-mo8drs2s-sc6b
+            - generic [ref=e177]:
+              - heading "高并发内存池整体框架设计" [level=3] [ref=e183]
+              - paragraph [ref=e184]: 现代很多的开发环境都是多核多线程，在申请内存的场景下，必然存在激烈的锁竞争问题。malloc 本身其实已经很优秀，但是我们项目的原型 tcmalloc 在多线程高并发的场景下更胜一筹，所以这次我们实现的内存池需要考虑以下几方面的问题： 1. 性能问题。 2. 多线程环境下，锁竞争问题。 3. 内存碎片问题。 所以 concurrent memory pool ...
+              - generic [ref=e186]: 高并发内存池
+          - 'link "前 K 个高频元素（优先队列） 难度中等1472收藏分享切换为英文接收动态反馈 给你一个整数数组 nums 和一个整数 k ，请你返回其中出现频率前 k 高的元素。你可以按 任意顺序 返回答案。 示例 1: 示例 2: 提示： 1 < nums.length < 105 k 的取值范围是 [1, 数组中不相同的元素的个数] 题目数据保证答案唯一，换句话说，数组中前 k 个高频元素的集合是唯一的 进阶：你所设计算法的时间复杂... 栈和队列" [ref=e187] [cursor=pointer]':
+            - /url: /articles/post-mo8drrlm-gkjt
+            - generic [ref=e188]:
+              - heading "前 K 个高频元素（优先队列）" [level=3] [ref=e189]
+              - paragraph [ref=e190]: "难度中等1472收藏分享切换为英文接收动态反馈 给你一个整数数组 nums 和一个整数 k ，请你返回其中出现频率前 k 高的元素。你可以按 任意顺序 返回答案。 示例 1: 示例 2: 提示： 1 < nums.length < 105 k 的取值范围是 [1, 数组中不相同的元素的个数] 题目数据保证答案唯一，换句话说，数组中前 k 个高频元素的集合是唯一的 进阶：你所设计算法的时间复杂..."
+              - generic [ref=e192]: 栈和队列
+          - link "删除链表中总和为零的连续节点 难度中等 给你一个链表的头节点 head，请你编写代码，反复删去链表中由 总和 值为 0 的连续节点组成的序列，直到不存在这样的序列为止。 删除完毕后，请你返回最终结果链表的头节点。 你可以返回任何满足题目要求的答案。 （注意，下面示例中的所有序列，都是对 ListNode 对象序列化的表示。） 示例 1： 示例 2： 示例 3： 如果要遍历到每一组求和等于0的连续结点，可以从每个结点出发，遍... 链表" [ref=e193] [cursor=pointer]:
+            - /url: /articles/post-mo8drrmz-arsw
+            - generic [ref=e194]:
+              - heading "删除链表中总和为零的连续节点" [level=3] [ref=e195]
+              - paragraph [ref=e196]: 难度中等 给你一个链表的头节点 head，请你编写代码，反复删去链表中由 总和 值为 0 的连续节点组成的序列，直到不存在这样的序列为止。 删除完毕后，请你返回最终结果链表的头节点。 你可以返回任何满足题目要求的答案。 （注意，下面示例中的所有序列，都是对 ListNode 对象序列化的表示。） 示例 1： 示例 2： 示例 3： 如果要遍历到每一组求和等于0的连续结点，可以从每个结点出发，遍...
+              - generic [ref=e198]: 链表
+          - 'link "命名空间 在C/C++中，变量、函数和后面要学习的类都是大量存在的，这些变量、函数和类的名称都存在于全局作用域中，可能会导致很多冲突。使用命名空间的目的是对标识符的名称进行本地化，以避免命名冲突或者名字污染，namespace关键字的出现就是针对这种问题的。 定义命名空间，需要使用到namespace关键字，后面跟命名空间的名字，然后接一对{}即可，{}中即为命名空间的成员... C++" [ref=e199] [cursor=pointer]':
+            - /url: /articles/post-mo8droyp-wl4e
+            - generic [ref=e200]:
+              - heading "命名空间" [level=3] [ref=e206]
+              - paragraph [ref=e207]: "在C/C++中，变量、函数和后面要学习的类都是大量存在的，这些变量、函数和类的名称都存在于全局作用域中，可能会导致很多冲突。使用命名空间的目的是对标识符的名称进行本地化，以避免命名冲突或者名字污染，namespace关键字的出现就是针对这种问题的。 定义命名空间，需要使用到namespace关键字，后面跟命名空间的名字，然后接一对{}即可，{}中即为命名空间的成员..."
+              - generic [ref=e209]: C++
+          - link "项目背景 超文本传输协议 HTTP 我们都学过了，并且也做过类似简单的 HTTP 服务器，其实就是对在 TCP 服务器上对 HTTP 协议进行一个简单的请求响应的过程，为此我们可以搭建一个属于我们自己的网站。 但是这个项目的核心不是应用层，而是在应用层之下的一个高性能服务器框架，有了这个框架之后，我们可以在这个框架之上搭载多种应用层协议，而为了让项目效果更加明显一些，就搭载我们最常见的 H... 高并发服务器" [ref=e210] [cursor=pointer]:
+            - /url: /articles/post-mo8drs61-qfg7
+            - generic [ref=e211]:
+              - heading "项目背景" [level=3] [ref=e212]
+              - paragraph [ref=e213]: 超文本传输协议 HTTP 我们都学过了，并且也做过类似简单的 HTTP 服务器，其实就是对在 TCP 服务器上对 HTTP 协议进行一个简单的请求响应的过程，为此我们可以搭建一个属于我们自己的网站。 但是这个项目的核心不是应用层，而是在应用层之下的一个高性能服务器框架，有了这个框架之后，我们可以在这个框架之上搭载多种应用层协议，而为了让项目效果更加明显一些，就搭载我们最常见的 H...
+              - generic [ref=e215]: 高并发服务器
+          - link "最长公共子序列（medium） 1143. 最长公共子序列 给定两个字符串 text1 和 text2，返回这两个字符串的最长 公共子序列 的长度。如果不存在 公共子序列 ，返回 0 。一个字符串的 子序列 是指这样一个新的字符串：它是由原字符串在不改变字符的相对顺序的情况下删除某些字符（也可以不删除任何字符）后组成的新字符串。 例如，\"ace\" 是 \"abcde\" 的子序列，但 \"aec\" 不是 \"abcd... 动态规划" [ref=e216] [cursor=pointer]:
+            - /url: /articles/post-mo8drqop-9fg5
+            - generic [ref=e217]:
+              - heading "最长公共子序列（medium）" [level=3] [ref=e218]
+              - paragraph [ref=e219]: 1143. 最长公共子序列 给定两个字符串 text1 和 text2，返回这两个字符串的最长 公共子序列 的长度。如果不存在 公共子序列 ，返回 0 。一个字符串的 子序列 是指这样一个新的字符串：它是由原字符串在不改变字符的相对顺序的情况下删除某些字符（也可以不删除任何字符）后组成的新字符串。 例如，"ace" 是 "abcde" 的子序列，但 "aec" 不是 "abcd...
+              - generic [ref=e221]: 动态规划
+        - link "查看全部文章" [ref=e223] [cursor=pointer]:
+          - /url: /articles
+  - contentinfo [ref=e224]:
+    - navigation [ref=e225]:
+      - link "博客" [ref=e226] [cursor=pointer]:
+        - /url: /articles
+      - generic [ref=e227]: ·
+      - link "RSS" [ref=e228] [cursor=pointer]:
+        - /url: /feed.xml
+      - generic [ref=e229]: ·
+      - link "GitHub" [ref=e230] [cursor=pointer]:
+        - /url: https://github.com/lirendada
+    - paragraph [ref=e231]: 用爱发电 © 2026
+  - button "切换到暗色模式" [ref=e233] [cursor=pointer]:
+    - img [ref=e234]

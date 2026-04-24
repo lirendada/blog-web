@@ -31,6 +31,14 @@ type PaginationState = {
   totalPages: number
 }
 
+type FetchSummary = {
+  inserted: number
+  updated: number
+  filtered: number
+  failed: number
+  errors: number
+}
+
 type SourceDraft = {
   name: string
   feedUrl: string
@@ -94,6 +102,7 @@ export default function AdminNewsPage() {
   const [itemsLoading, setItemsLoading] = useState(true)
   const [sourceMessage, setSourceMessage] = useState('')
   const [itemMessage, setItemMessage] = useState('')
+  const [fetchMessage, setFetchMessage] = useState('')
 
   const [newName, setNewName] = useState('')
   const [newFeedUrl, setNewFeedUrl] = useState('')
@@ -103,6 +112,7 @@ export default function AdminNewsPage() {
   const [editDraft, setEditDraft] = useState<SourceDraft>({ name: '', feedUrl: '', siteUrl: '' })
   const [savingSourceId, setSavingSourceId] = useState<string | null>(null)
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null)
+  const [fetchingNews, setFetchingNews] = useState(false)
   const [selectedSourceId, setSelectedSourceId] = useState('all')
   const [itemPage, setItemPage] = useState(1)
 
@@ -312,6 +322,37 @@ export default function AdminNewsPage() {
     setItemMessage('')
   }
 
+  const handleFetchNews = async () => {
+    if (activeRssCount === 0) {
+      setFetchMessage('没有启用中的 RSS 源，无法手动抓取')
+      return
+    }
+
+    setFetchingNews(true)
+    setFetchMessage('')
+
+    try {
+      const res = await fetch('/api/admin/fetch-news', { method: 'POST' })
+      if (!res.ok) throw new Error(await readError(res, '手动抓取失败'))
+
+      const data = await res.json()
+      const summary = data.summary as FetchSummary | undefined
+      if (summary) {
+        setFetchMessage(
+          `手动抓取完成：新增 ${summary.inserted}，更新 ${summary.updated}，过滤 ${summary.filtered}，单条失败 ${summary.failed}，源失败 ${summary.errors}`
+        )
+      } else {
+        setFetchMessage('手动抓取完成')
+      }
+
+      await Promise.all([loadSources(), loadItems()])
+    } catch (error) {
+      setFetchMessage(error instanceof Error ? error.message : '手动抓取失败')
+    } finally {
+      setFetchingNews(false)
+    }
+  }
+
   const getEmptyMessage = () => {
     if (selectedSourceId !== 'all') return '当前来源下暂无资讯'
     if (sources.length === 0) return '还没有 RSS 源，先添加来源后等待定时任务抓取'
@@ -334,24 +375,39 @@ export default function AdminNewsPage() {
           <div>
             <h1 className="font-[family-name:var(--font-heading)] text-2xl text-text dark:text-dark-text">资讯管理</h1>
             <p className="font-[family-name:var(--font-mono)] text-xs text-text-secondary dark:text-dark-text-secondary mt-1">
-              RSS 定时聚合：每天 09:00 / 14:00 / 21:00 自动抓取，不再提供手动抓取入口
+              RSS 定时聚合：每天 09:00 / 14:00 / 21:00 自动抓取，也可以在这里手动补抓
             </p>
           </div>
-          <div className="grid grid-cols-3 gap-2 min-w-[360px]">
-            <div className="border border-dashed border-border-light dark:border-dark-border-light rounded-[var(--radius-md)] px-3 py-2 bg-bg-card dark:bg-dark-bg-card">
-              <div className="font-[family-name:var(--font-mono)] text-[11px] text-text-secondary dark:text-dark-text-secondary">启用 RSS</div>
-              <div className="font-[family-name:var(--font-heading)] text-xl text-text dark:text-dark-text">{activeRssCount}</div>
-            </div>
-            <div className="border border-dashed border-border-light dark:border-dark-border-light rounded-[var(--radius-md)] px-3 py-2 bg-bg-card dark:bg-dark-bg-card">
-              <div className="font-[family-name:var(--font-mono)] text-[11px] text-text-secondary dark:text-dark-text-secondary">资讯总数</div>
-              <div className="font-[family-name:var(--font-heading)] text-xl text-text dark:text-dark-text">{totalItemCount}</div>
-            </div>
-            <div className="border border-dashed border-border-light dark:border-dark-border-light rounded-[var(--radius-md)] px-3 py-2 bg-bg-card dark:bg-dark-bg-card">
-              <div className="font-[family-name:var(--font-mono)] text-[11px] text-text-secondary dark:text-dark-text-secondary">最近抓取</div>
-              <div className="font-[family-name:var(--font-mono)] text-sm text-text dark:text-dark-text">
-                {latestFetched ? formatDateTime(latestFetched.toISOString()) : '从未'}
+          <div className="flex flex-col items-stretch sm:items-end gap-2">
+            <button
+              type="button"
+              onClick={handleFetchNews}
+              disabled={fetchingNews || activeRssCount === 0}
+              className="self-start sm:self-end font-[family-name:var(--font-mono)] text-xs text-accent dark:text-dark-accent hover:text-accent-hover dark:hover:text-dark-accent-hover py-1.5 px-3 border border-dashed border-accent dark:border-dark-accent rounded-[var(--radius-sm)] transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {fetchingNews ? '抓取中...' : '立即抓取'}
+            </button>
+            <div className="grid grid-cols-3 gap-2 min-w-[360px] max-sm:min-w-0">
+              <div className="border border-dashed border-border-light dark:border-dark-border-light rounded-[var(--radius-md)] px-3 py-2 bg-bg-card dark:bg-dark-bg-card">
+                <div className="font-[family-name:var(--font-mono)] text-[11px] text-text-secondary dark:text-dark-text-secondary">启用 RSS</div>
+                <div className="font-[family-name:var(--font-heading)] text-xl text-text dark:text-dark-text">{activeRssCount}</div>
+              </div>
+              <div className="border border-dashed border-border-light dark:border-dark-border-light rounded-[var(--radius-md)] px-3 py-2 bg-bg-card dark:bg-dark-bg-card">
+                <div className="font-[family-name:var(--font-mono)] text-[11px] text-text-secondary dark:text-dark-text-secondary">资讯总数</div>
+                <div className="font-[family-name:var(--font-heading)] text-xl text-text dark:text-dark-text">{totalItemCount}</div>
+              </div>
+              <div className="border border-dashed border-border-light dark:border-dark-border-light rounded-[var(--radius-md)] px-3 py-2 bg-bg-card dark:bg-dark-bg-card">
+                <div className="font-[family-name:var(--font-mono)] text-[11px] text-text-secondary dark:text-dark-text-secondary">最近抓取</div>
+                <div className="font-[family-name:var(--font-mono)] text-sm text-text dark:text-dark-text">
+                  {latestFetched ? formatDateTime(latestFetched.toISOString()) : '从未'}
+                </div>
               </div>
             </div>
+            {fetchMessage && (
+              <p className="max-w-[520px] text-left sm:text-right font-[family-name:var(--font-mono)] text-xs text-text-secondary dark:text-dark-text-secondary">
+                {fetchMessage}
+              </p>
+            )}
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { calculateReadingTime, formatDate } from '@/lib/utils'
 import Typewriter from '@/components/ui/Typewriter'
 import TagCloud from '@/components/ui/TagCloud'
 import HotArticlesCarousel from '@/components/ui/HotArticlesCarousel'
+import HomeRankingBoards, { type ExternalRankingSource, type RankingBoard } from '@/components/ui/HomeRankingBoards'
 
 export const metadata: Metadata = {
   title: 'lirendada的小屋',
@@ -39,7 +40,15 @@ function JsonLd() {
   )
 }
 
-export const revalidate = 1800
+export const revalidate = 900
+
+const NEWS_PREVIEW_LIMIT = 10
+
+const externalRankingSources = [
+  { key: 'weibo', title: '微博热搜', meta: '实时热点', href: 'https://s.weibo.com/top/summary' },
+  { key: 'zhihu', title: '知乎热榜', meta: '讨论热度', href: 'https://www.zhihu.com/hot' },
+  { key: '36kr', title: '36氪热榜', meta: '商业科技', href: 'https://www.36kr.com/hot-list/catalog' },
+] satisfies ExternalRankingSource[]
 
 async function getTags() {
   const tags = await prisma.tag.findMany({
@@ -105,11 +114,48 @@ async function getHotArticles() {
   }))
 }
 
+async function getLatestNewsItems() {
+  return prisma.newsItem.findMany({
+    orderBy: [
+      { publishedAt: 'desc' },
+      { fetchedAt: 'desc' },
+    ],
+    take: NEWS_PREVIEW_LIMIT,
+    select: {
+      id: true,
+      title: true,
+      url: true,
+      sourceName: true,
+    },
+  })
+}
+
+type LatestNewsItem = Awaited<ReturnType<typeof getLatestNewsItems>>[number]
+
+function buildAiRanking(items: LatestNewsItem[]): RankingBoard | null {
+  if (items.length === 0) return null
+
+  return {
+    key: 'ai-news',
+    title: 'AI 资讯',
+    meta: '本地精选',
+    href: '/news',
+    featured: true,
+    items: items.map((item) => ({
+      id: item.id,
+      title: item.title,
+      url: item.url,
+      hot: item.sourceName || 'AI',
+    })),
+  }
+}
+
 export default async function HomePage() {
-  const [tags, latestArticles, hotArticles] = await Promise.all([
+  const [tags, latestArticles, hotArticles, latestNewsItems] = await Promise.all([
     getTags(),
     getLatestArticles(),
     getHotArticles(),
+    getLatestNewsItems(),
   ])
 
   const topicTags = tags
@@ -118,6 +164,7 @@ export default async function HomePage() {
   const wanderArticle =
     hotArticles.find((article) => article.slug !== featuredArticle?.slug)
     ?? latestArticles.find((article) => article.slug !== featuredArticle?.slug)
+  const aiRanking = buildAiRanking(latestNewsItems)
 
   return (
     <>
@@ -206,6 +253,21 @@ export default async function HomePage() {
               查看全部文章
             </Link>
           </div>
+        </section>
+
+        <section className="home-section home-news-section pb-16">
+          <div className="home-section-heading">
+            <div>
+              <p className="home-section-kicker">hot rankings</p>
+              <h2 className="home-section-title">资讯热度榜</h2>
+            </div>
+          </div>
+
+          <HomeRankingBoards
+            aiRanking={aiRanking}
+            sources={externalRankingSources}
+            limit={NEWS_PREVIEW_LIMIT}
+          />
         </section>
       </div>
     </>

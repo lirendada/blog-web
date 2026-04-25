@@ -393,6 +393,228 @@ p {
   overflow-wrap: anywhere;
 }
 
+.home-news-section {
+  border-bottom: 0;
+}
+
+.home-ranking-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.home-ranking-card {
+  min-width: 0;
+  padding: 18px 18px 8px;
+  border: 1px dashed var(--color-border-light);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(180deg, rgba(253, 252, 250, 0.7), rgba(253, 252, 250, 0.48)),
+    repeating-linear-gradient(to bottom, transparent, transparent 31px, var(--color-line) 31px, var(--color-line) 32px);
+  box-shadow: var(--shadow-sm);
+}
+
+.home-ranking-card-featured {
+  border-color: color-mix(in srgb, var(--color-accent) 26%, var(--color-border-light));
+  background:
+    linear-gradient(180deg, rgba(253, 252, 250, 0.78), rgba(253, 252, 250, 0.52)),
+    repeating-linear-gradient(to bottom, transparent, transparent 31px, var(--color-line) 31px, var(--color-line) 32px);
+}
+
+.dark .home-ranking-card {
+  border-color: var(--color-dark-border-light);
+  background:
+    linear-gradient(180deg, rgba(42, 44, 44, 0.7), rgba(42, 44, 44, 0.48)),
+    repeating-linear-gradient(to bottom, transparent, transparent 31px, var(--color-dark-border) 31px, var(--color-dark-border) 32px);
+  box-shadow: var(--shadow-sm);
+}
+
+.dark .home-ranking-card-featured {
+  border-color: color-mix(in srgb, var(--color-dark-accent) 22%, var(--color-dark-border-light));
+  background:
+    linear-gradient(180deg, rgba(42, 44, 44, 0.78), rgba(42, 44, 44, 0.52)),
+    repeating-linear-gradient(to bottom, transparent, transparent 31px, var(--color-dark-border) 31px, var(--color-dark-border) 32px);
+}
+
+.home-ranking-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--color-border-light);
+}
+
+.dark .home-ranking-card-head {
+  border-bottom-color: var(--color-dark-border-light);
+}
+
+.home-ranking-meta,
+.home-ranking-more,
+.home-ranking-hot,
+.home-ranking-index {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.home-ranking-meta {
+  margin-bottom: 4px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.dark .home-ranking-meta {
+  color: var(--color-dark-accent);
+}
+
+.home-ranking-title {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+.dark .home-ranking-title {
+  color: var(--color-dark-text);
+}
+
+.home-ranking-more {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  padding: 4px 7px;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  background: color-mix(in srgb, var(--color-bg-card) 72%, transparent);
+  transition: color 200ms ease, border-color 200ms ease, transform 200ms ease;
+}
+
+.home-ranking-more:hover,
+.home-ranking-more:focus-visible {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  transform: translateY(-1px);
+}
+
+.dark .home-ranking-more {
+  border-color: var(--color-dark-border);
+  color: var(--color-dark-text-secondary);
+  background: color-mix(in srgb, var(--color-dark-bg-card) 72%, transparent);
+}
+
+.dark .home-ranking-more:hover,
+.dark .home-ranking-more:focus-visible {
+  color: var(--color-dark-accent);
+  border-color: var(--color-dark-accent);
+}
+
+.home-ranking-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-ranking-item {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+  min-height: 42px;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--color-border-light);
+}
+
+.home-ranking-item:last-child {
+  border-bottom: 0;
+}
+
+.dark .home-ranking-item {
+  border-bottom-color: var(--color-dark-border-light);
+}
+
+.home-ranking-index {
+  color: var(--color-text-secondary);
+}
+
+.home-ranking-item:nth-child(-n + 3) .home-ranking-index {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.dark .home-ranking-index {
+  color: var(--color-dark-text-secondary);
+}
+
+.dark .home-ranking-item:nth-child(-n + 3) .home-ranking-index {
+  color: var(--color-dark-accent);
+}
+
+.home-ranking-link {
+  min-width: 0;
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+  transition: color 200ms ease, transform 200ms ease;
+}
+
+.home-ranking-link:hover,
+.home-ranking-link:focus-visible {
+  color: var(--color-accent);
+  transform: translateX(2px);
+}
+
+.dark .home-ranking-link {
+  color: var(--color-dark-text);
+}
+
+.dark .home-ranking-link:hover,
+.dark .home-ranking-link:focus-visible {
+  color: var(--color-dark-accent);
+}
+
+.home-ranking-hot {
+  max-width: 88px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dark .home-ranking-hot {
+  color: var(--color-dark-text-secondary);
+}
+
+.home-ranking-state {
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  border: 1px dashed var(--color-border-light);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.8;
+  text-align: center;
+  color: var(--color-text-secondary);
+  background: color-mix(in srgb, var(--color-bg-card) 54%, transparent);
+}
+
+.dark .home-ranking-state {
+  border-color: var(--color-dark-border-light);
+  color: var(--color-dark-text-secondary);
+  background: color-mix(in srgb, var(--color-dark-bg-card) 46%, transparent);
+}
+
 
 @media (prefers-reduced-motion: reduce) {
   .home-note-card,
@@ -401,6 +623,8 @@ p {
   .home-text-link,
   .home-feature-card,
   .home-recent-row,
+  .home-ranking-link,
+  .home-ranking-more,
   .tag-cloud-item {
     transition: none;
   }
@@ -444,6 +668,23 @@ p {
   .home-section-heading {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .home-ranking-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .home-ranking-card {
+    padding: 16px 16px 6px;
+  }
+
+  .home-ranking-item {
+    grid-template-columns: 28px minmax(0, 1fr);
+  }
+
+  .home-ranking-hot {
+    display: none;
   }
 }
 

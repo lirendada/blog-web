@@ -375,7 +375,7 @@ export default function AdminNewsPage() {
           <div>
             <h1 className="font-[family-name:var(--font-heading)] text-2xl text-text dark:text-dark-text">资讯管理</h1>
             <p className="font-[family-name:var(--font-mono)] text-xs text-text-secondary dark:text-dark-text-secondary mt-1">
-              RSS 定时聚合：每天 09:00 / 14:00 / 21:00 自动抓取，也可以在这里手动补抓
+              RSS 定时聚合：每 2 小时自动抓取（0:00, 2:00, 4:00 ... 22:00），也可以在这里手动补抓
             </p>
           </div>
           <div className="flex flex-col items-stretch sm:items-end gap-2">

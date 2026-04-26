@@ -52,3 +52,4 @@ prisma/migrations/
 postgres-data/
 public/notes-img
 .context/
+.gstack/

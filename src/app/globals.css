@@ -103,8 +103,51 @@ p {
 }
 
 .site-nav-actions > a,
-.site-nav-actions > button {
+.site-nav-actions > button,
+.site-nav-actions > div {
   flex: 0 0 auto;
+}
+
+/* Search input — inspired by neo-brutalist offset shadow */
+.search-input-wrap {
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.search-input-wrap:hover {
+  border-color: var(--color-border);
+}
+
+.dark .search-input-wrap:hover {
+  border-color: var(--color-dark-border);
+}
+
+.search-input-wrap:focus-within {
+  border-style: solid;
+  border-color: var(--color-accent);
+  box-shadow: -2px -2px 0 rgba(125, 144, 112, 0.20);
+}
+
+.dark .search-input-wrap:focus-within {
+  border-color: var(--color-dark-accent);
+  box-shadow: -2px -2px 0 rgba(143, 166, 130, 0.16);
+}
+
+.search-input-wrap:hover .search-icon-anim {
+  animation: search-icon-pulse 1s ease infinite;
+}
+
+.search-input-wrap:focus-within .search-icon-anim {
+  animation: none;
+  color: var(--color-accent);
+}
+
+.dark .search-input-wrap:focus-within .search-icon-anim {
+  color: var(--color-dark-accent);
+}
+
+@keyframes search-icon-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
 }
 
 .home-page {
@@ -630,8 +673,13 @@ p {
   }
 
   .home-note-card,
-  .tag-cloud-item {
+  .tag-cloud-item,
+  .search-icon-anim {
     animation: none;
+  }
+
+  .search-input-wrap {
+    transition: none;
   }
 }
 

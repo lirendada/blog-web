@@ -1,9 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import SearchDialog from '@/components/ui/SearchDialog'
+
+type SearchResult = {
+  id: string
+  title: string
+  slug: string
+  excerpt: string | null
+  publishedAt: string | null
+}
 
 type NavIconProps = {
   className?: string
@@ -77,19 +85,37 @@ const navLinks = [
 
 export default function Navbar() {
   const pathname = usePathname()
+  const router = useRouter()
+
+  // Inline search state (desktop dropdown)
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState<SearchResult[]>([])
+  const [loading, setLoading] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(-1)
+  const [showDropdown, setShowDropdown] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const searchRef = useRef<HTMLDivElement>(null)
+
+  // Mobile dialog state
   const [searchOpen, setSearchOpen] = useState(false)
 
+  // ⌘K shortcut
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault()
-        setSearchOpen((v) => !v)
+        if (window.innerWidth < 640) {
+          setSearchOpen(true)
+        } else {
+          inputRef.current?.focus()
+        }
       }
     }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
   }, [])
 
+  // Tab visibility title
   useEffect(() => {
     let original = document.title
     const handler = () => {
@@ -103,6 +129,65 @@ export default function Navbar() {
     document.addEventListener('visibilitychange', handler)
     return () => document.removeEventListener('visibilitychange', handler)
   }, [])
+
+  // Debounced search
+  const search = useCallback(async (q: string) => {
+    if (q.length < 2) { setResults([]); return }
+    setLoading(true)
+    try {
+      const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`)
+      const data = await res.json()
+      setResults(data.articles || [])
+    } catch { setResults([]) }
+    finally { setLoading(false) }
+    setActiveIndex(-1)
+  }, [])
+
+  useEffect(() => {
+    const timer = setTimeout(() => search(query), 300)
+    return () => clearTimeout(timer)
+  }, [query, search])
+
+  // Close dropdown on navigation
+  useEffect(() => {
+    setShowDropdown(false)
+    setQuery('')
+    setResults([])
+  }, [pathname])
+
+  // Click outside to close dropdown
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowDropdown(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
+
+  const handleSelect = (slug: string) => {
+    setShowDropdown(false)
+    setQuery('')
+    router.push(`/articles/${slug}`)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setActiveIndex((i) => Math.min(i + 1, results.length - 1))
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setActiveIndex((i) => Math.max(i - 1, 0))
+    } else if (e.key === 'Enter' && activeIndex >= 0 && results[activeIndex]) {
+      handleSelect(results[activeIndex].slug)
+    } else if (e.key === 'Escape') {
+      setShowDropdown(false)
+      inputRef.current?.blur()
+    }
+  }
+
+  const hasDropdown = showDropdown && query.length >= 2
 
   return (
     <>
@@ -139,10 +224,12 @@ export default function Navbar() {
             px-1.5 py-1
           "
         >
+          {/* Mobile: search icon → dialog */}
           <button
             onClick={() => setSearchOpen(true)}
             className="
-              inline-flex h-9 w-8 sm:w-9 items-center justify-center
+              sm:hidden
+              inline-flex h-9 w-8 items-center justify-center
               rounded-[var(--radius-sm)] border border-transparent
               text-text-secondary dark:text-dark-text-secondary
               hover:-translate-y-[2px]
@@ -162,6 +249,86 @@ export default function Navbar() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </button>
+
+          {/* Desktop: inline search input + dropdown */}
+          <div ref={searchRef} className="hidden sm:block relative">
+            <div className="search-input-wrap flex items-center h-9 w-48 rounded-[var(--radius-sm)] border-[1.5px] border-dashed border-border-light dark:border-dark-border-light">
+              <svg
+                className="search-icon-anim shrink-0 ml-2.5 w-3.5 h-3.5 text-text-secondary dark:text-dark-text-secondary transition-colors translate-y-[0.5px]"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                ref={inputRef}
+                value={query}
+                onChange={(e) => { setQuery(e.target.value); if (!showDropdown) setShowDropdown(true) }}
+                onFocus={() => setShowDropdown(true)}
+                onKeyDown={handleKeyDown}
+                placeholder="搜索..."
+                className="
+                  flex-1 min-w-0 bg-transparent border-0 focus:outline-none
+                  font-mono text-sm pl-2 pr-1 py-1.5 leading-none
+                  text-text dark:text-dark-text
+                  placeholder:text-text-secondary/50 dark:placeholder:text-dark-text-secondary/50
+                "
+              />
+              <kbd className="shrink-0 pr-2.5 font-mono text-[10px] text-text-secondary/40 dark:text-dark-text-secondary/40 pointer-events-none select-none">
+                ⌘K
+              </kbd>
+            </div>
+
+            {/* Dropdown results */}
+            {hasDropdown && (
+              <div
+                className="
+                  absolute left-0 top-full mt-1.5 w-80
+                  bg-bg-card dark:bg-dark-bg-card
+                  border border-dashed border-border-light dark:border-dark-border-light
+                  rounded-[var(--radius-lg)]
+                  shadow-[0_4px_16px_rgba(74,69,64,0.08)]
+                  dark:shadow-[0_4px_16px_rgba(0,0,0,0.25)]
+                  overflow-hidden z-50
+                "
+              >
+                {loading && (
+                  <div className="py-6 text-center font-mono text-xs text-text-secondary dark:text-dark-text-secondary">
+                    搜索中...
+                  </div>
+                )}
+
+                {!loading && results.length === 0 && (
+                  <div className="py-6 text-center font-mono text-xs text-text-secondary dark:text-dark-text-secondary">
+                    未找到相关文章
+                  </div>
+                )}
+
+                {!loading && results.map((article, i) => (
+                  <button
+                    key={article.id}
+                    onClick={() => handleSelect(article.slug)}
+                    className={`
+                      w-full text-left px-4 py-3 transition-colors cursor-pointer
+                      ${i === activeIndex
+                        ? 'bg-accent-light/50 dark:bg-dark-accent-light/50'
+                        : 'hover:bg-bg-secondary dark:hover:bg-dark-bg-secondary'
+                      }
+                      ${i < results.length - 1 ? 'border-b border-dashed border-border-light dark:border-dark-border-light' : ''}
+                    `}
+                  >
+                    <div className="font-heading text-sm text-text dark:text-dark-text line-clamp-1">
+                      {article.title}
+                    </div>
+                    {article.excerpt && (
+                      <div className="font-mono text-xs text-text-secondary dark:text-dark-text-secondary mt-1 line-clamp-1">
+                        {article.excerpt}
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
           {navLinks.map((link) => {
             const isActive = pathname === link.href || (link.href === '/articles' && pathname.startsWith('/articles') && !pathname.startsWith('/articles/tag'))
